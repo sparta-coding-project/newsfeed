@@ -8,5 +8,5 @@ app.use(bodyParser.json())
 app.use(cookieParser())
 
 app.listen(process.env.PORT, () => {
-    process.env.PORT
+    console.log(process.env.PORT)
 })
