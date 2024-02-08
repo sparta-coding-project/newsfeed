@@ -10,16 +10,70 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Comments {
-  commentId Int       @default(autoincrement()) @map("commentId")
-  userId    Int       @map("userId")
-  postId    Int       @map("postId")
-  content   String?   @map("content") @db.text
-  createdAt DateTime? @default(now()) @map("createdAt")
-  updatedAt DateTime? @updatedAt @map("updatedAt")
+model Users {
+  userId       Int      @id @unique @default(autoincrement()) @map("UserId")
+  username     String   @unique @map("UserName")
+  nickname     String   @map("NickName")
+  email        String   @unique @map("Email")
+  age          Int?     @map("Age")
+  introduction String?  @map("Introduction")
+  password     String   @map("Password")
+  createdAt    DateTime @default(now()) @map("CreatedAt")
+  updatedAt    DateTime @default(now()) @updatedAt @map("UpdatedAt")
 
-  user Users @relation(fields: [userId], references: [userId], onDelete: Cascade)
-  post Posts @relation(fields: [postId], references: [postId], onDelete: Cascade)
+  posts    Posts[]
+  comments Comments[]
+  rfTokens RefreshToken?
+
+  @@map("Users")
+}
+
+model RefreshToken {
+  refTokenId Int    @id @default(autoincrement()) @map("RefreshTokenId")
+  userId     Int    @unique @map("UserId")
+  refToken   String @map("RefreshToken") @db.Text
+
+  users Users @relation(fields: [userId], references: [userId], onDelete: Cascade)
+
+  @@map("RefreshToken")
+}
+
+model Posts {
+  postId    Int      @id @default(autoincrement()) @map("PostId")
+  userId    Int      @map("UserId")
+  title     String   @map("Title")
+  author    String   @map("Author")
+  content   String   @map("Content") @db.Text
+  createdAt DateTime @default(now()) @map("CreatedAt")
+  updatedAt DateTime @default(now()) @updatedAt @map("UpdatedAt")
+
+  comments Comments[]
+  photos   Photos[]
+  users    Users      @relation(fields: [userId], references: [userId], onDelete: Cascade)
+
+  @@map("Posts")
+}
+
+model Comments {
+  commentId Int      @id @default(autoincrement()) @map("CommentId")
+  userId    Int      @map("UserId")
+  postId    Int      @map("PostId")
+  content   String?  @map("Content") @db.Text
+  createdAt DateTime @default(now()) @map("CreatedAt")
+  updatedAt DateTime @default(now()) @updatedAt @map("UpdatedAt")
+
+  users Users @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  posts Posts @relation(fields: [postId], references: [postId], onDelete: Cascade)
 
   @@map("Comments")
+}
+
+model Photos {
+  photoId Int    @id @default(autoincrement()) @map("PhotoId")
+  postId  Int    @map("PostId")
+  photo   String @map("Photo") @db.Text
+
+  posts Posts @relation(fields: [postId], references: [postId], onDelete: Cascade)
+
+  @@map("Photos")
 }
