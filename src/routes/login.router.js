@@ -31,8 +31,8 @@ router.post("/signup", async (req, res) => {
       });
       return res.status(201).json({ message: "회원 가입이 완료되었습니다." });
     }
-  } catch (err) {
-    return res.status(400).json({ message: err });
+  } catch (error) {
+    return res.status(400).json({ message: error });
   }
 });
 
@@ -65,10 +65,10 @@ router.post("/signout", async (req, res) => {
     res.clearCookie("refreshToken");
 
     return res.status(200).json({ message: "로그아웃 되었습니다." });
-  } catch (err) {
+  } catch (error) {
     return res
       .status(400)
-      .json({ message: "로그아웃에 실패했습니다.", error: err });
+      .json({ message: "로그아웃에 실패했습니다.", error });
   }
 });
 

@@ -20,7 +20,7 @@ export default async (req, res, next) => {
         }else{
             return res.status(401).json({message: "인증에 실패하였습니다."})
         }
-    }catch(err){
-        return res.status(400).json({message: err.message})
+    }catch(error){
+        return res.status(400).json({message: error.message})
     }
 }
