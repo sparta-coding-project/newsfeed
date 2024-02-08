@@ -11,34 +11,26 @@ const router = express.Router();
 //게시물 작성 API
 router.post("/postView", authMiddleware, async (req, res, next) => {
   try {
-    const { id, name } = req.locals.user; //id = users 테이블의Id
-    const { title, content, photo1, photo2, photo3, photo4 } = req.body;
+    const { userId, nickname } = req.locals.user;
+    const { title, content, photo } = req.body;
     const post = await prisma.posts.create({
       data: {
-        id: +id,
+        id: +userId,
         title,
-        author: name,
+        author: nickname,
         content,
+        photos: {
+          photo,
+        },
       },
     });
-    const photos = await prisma.photos.create({
-      data: {
-        postId: +post.id,
-        photo1,
-        photo2,
-        photo3,
-        photo4,
-      },
-    });
+
     return res.status(201).json({
       message: "게시물 작성이 완료되었습니다.",
       data: {
         title: post.title,
         author: post.author,
-        photo1: photos.photo1,
-        photo2: photos.photo2,
-        photo3: photos.photo3,
-        photo4: photos.photo4,
+        photo: post.photo,
         createdAt: post.createdAt,
       },
     });
@@ -47,43 +39,39 @@ router.post("/postView", authMiddleware, async (req, res, next) => {
   }
 });
 //게시물 조회 API
-router.get("/postView/:id", async (req, res, next) => {
+router.get("/postView/:postId", async (req, res, next) => {
   try {
-    //뉴스피드의 유저id가 아니라 포스트id를 타고 가도록 해야 함
-    const { id } = req.params; //posts의 id
+    const { postId } = req.params;
 
-    const post = await prisma.resume.findFirst({
+    const post = await prisma.posts.findFirst({
       where: {
-        id: +id,
+        userId: +userId,
+        postId: +postId,
       },
       select: {
         title: true,
         content: true,
         photos: {
           select: {
-            photo1: true,
-            photo2: true,
-            photo3: true,
-            photo4: true,
+            photo: true,
           },
         },
         createdAt: true,
+        updatedAt: true,
       },
     });
-    if (!post)
+    if (!post) {
       return res
         .status(404)
-        .json({ error: "해당 게시물이 존재하지 않습니다." });
+        .json({ message: "해당 게시물이 존재하지 않습니다." });
+    }
     return res.status(200).json({
       message: "게시물이 조회되었습니다.",
       data: {
         title: post.title,
         author: post.author,
         photos: {
-          photo1: post.photo1,
-          photo2: post.photo2,
-          photo3: post.photo3,
-          photo4: post.photo4,
+          photo: post.photo,
         },
       },
     });
@@ -92,46 +80,43 @@ router.get("/postView/:id", async (req, res, next) => {
   }
 });
 //게시물 수정 API
-router.put("/postView/:id", authMiddleware, async (req, res, next) => {
+router.put("/postView/:postId", authMiddleware, async (req, res, next) => {
   try {
-    //postId와 userId 필요
-    const { id } = req.params; //Posts 테이블의 id
-    const { userId } = req.locals.user; //Users 테이블의 id
-    const { title, content, photo1, photo2, photo3, photo4 } = req.body;
+    const { postId } = req.params;
+    const { userId } = req.locals.user;
+    const { title, content, photo } = req.body;
 
     const post = await prisma.posts.update({
       where: {
-        id: +id,
+        postId: +postId,
         userId: +userId,
       },
       data: {
         title,
         content,
+        photos: {
+          update: {
+            where: {
+              postId: +postId,
+              photoId: +photoId,
+            },
+            data: {
+              photo,
+            },
+          },
+        },
       },
     });
-    const photos = await prisma.photos.update({
-      where: {
-        postId: +id,
-      },
-      data: {
-        photo1,
-        photo2,
-        photo3,
-        photo4,
-      },
-    });
+
     if (!resume)
-      return res.status(404).json({ error: "게시물 수정에 실패하였습니다." });
+      return res.status(404).json({ message: "게시물 수정에 실패하였습니다." });
 
     return res.status(201).json({
       message: "게시물 수정이 완료되었습니다.",
       data: {
         title: post.title,
         content: post.content,
-        photo1: photos.photo1,
-        photo2: photos.photo2,
-        photo3: photos.photo3,
-        photo4: photos.photo4,
+        photo: post.photo,
       },
     });
   } catch (error) {
@@ -139,21 +124,23 @@ router.put("/postView/:id", authMiddleware, async (req, res, next) => {
   }
 });
 //게시물 삭제 API
-router.delete("/postView/:id", authMiddleware, async (req, res, next) => {
+router.delete("/postView/:postId", authMiddleware, async (req, res, next) => {
   try {
-    const { id } = req.locals.user; //Users테이블의 id
-    const { postId } = req.params; //Posts테이블의 id
-    const post = await prisma.resume.delete({
+    const { userId } = req.locals.user;
+    const { postId } = req.params;
+    const post = await prisma.posts.delete({
       where: {
-        id: +postId,
-        userId: id,
+        postId: +postId,
+        userId: +userId,
       },
     });
     if (!post)
-      return res.status(404).json({ error: "게시물을 삭제할 수 없습니다." });
+      return res.status(404).json({ message: "게시물을 삭제할 수 없습니다." });
     return res.status(200).json({ message: "게시물이 삭제되었습니다." });
   } catch (error) {
     next(error);
   }
 });
+
+//
 export default router;
