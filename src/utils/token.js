@@ -1,7 +1,8 @@
 import jwt from "jsonwebtoken";
 import { prisma } from "../utils/prisma/index.js";
+import "dotenv/config"
 
-const { TOKEN_SECRET_KEY = "asdfyiq123123@^%$&%!!#" } = process.env;
+const { TOKEN_SECRET_KEY } = process.env;
 
 /**
  * @param {Object} userData

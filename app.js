@@ -7,12 +7,14 @@ import loginRouter from './src/routes/login.router.js'
 
 const app = express();
 
+const PORT = process.env.PORT || 3000
+
 app.use(express.json());
 app.use(bodyParser.json());
 app.use(cookieParser());
 
 app.use("/api", [loginRouter]);
 
-app.listen(process.env.PORT, () => {
-  console.log(process.env.PORT);
+app.listen(PORT, () => {
+  console.log(PORT);
 });
