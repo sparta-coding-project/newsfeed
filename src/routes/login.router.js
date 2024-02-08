@@ -47,7 +47,7 @@ router.post("/signin", async (req, res) => {
 
   if (user) {
     if (checkPW(password, user.password)) {
-      const tokens = await generateTokens(res, {userId: user.userId});
+      const tokens = await generateTokens(res, { userId: user.userId });
       return res
         .status(200)
         .json({ message: "로그인이 완료되었습니다.", data: tokens });
@@ -56,6 +56,19 @@ router.post("/signin", async (req, res) => {
     }
   } else {
     return res.status(401).json({ message: "존재하지 않는 사용자입니다." });
+  }
+});
+
+router.post("/signout", async (req, res) => {
+  try {
+    res.clearCookie("accessToken");
+    res.clearCookie("refreshToken");
+
+    return res.status(200).json({ message: "로그아웃 되었습니다." });
+  } catch (err) {
+    return res
+      .status(400)
+      .json({ message: "로그아웃에 실패했습니다.", error: err });
   }
 });
 

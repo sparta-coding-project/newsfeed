@@ -1,5 +1,5 @@
 import { verifyAccessToken } from "../utils/token";
-import {prisma} from "../utils/prisma";
+import { prisma } from "../utils/prisma";
 
 export default async (req, res, next) => {
     try{
@@ -15,7 +15,7 @@ export default async (req, res, next) => {
     
         if (user) {
             req.locals = {};
-            req.locals = user
+            req.locals.user = user
             next()
         }else{
             return res.status(401).json({message: "인증에 실패하였습니다."})

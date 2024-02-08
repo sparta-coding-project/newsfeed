@@ -61,14 +61,14 @@ export const generateTokens = async (res, userData) => {
         userId: userData.userId,
       },
       data: {
-        refToken: refreshToken,
+        refreshToken,
       },
     });
   }else{
     await prisma.refreshToken.create({
         data:{
             userId: userData.userId,
-            refToken: refreshToken
+            refreshToken
         }
     })
   }
