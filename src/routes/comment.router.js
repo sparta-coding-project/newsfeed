@@ -19,8 +19,8 @@ router.post("/postView/:postId", authMiddleware, async (req, res, next) => {
       },
     });
     return res.status(201).redirect(`/api/postView/${postId}`);
-  } catch (err) {
-    next(err);
+  } catch (error) {
+    next(error);
   }
 });
 
@@ -52,8 +52,8 @@ router.get("/postView/:postId", async (req, res, next) => {
       return res.status(400).json({ message: "댓글이 존재하지 않습니다." });
 
     return res.status(200).json({ data: data.comments });
-  } catch (err) {
-    next(err);
+  } catch (error) {
+    next(error);
   }
 });
 
@@ -78,8 +78,8 @@ router.patch("/postView/:commentId", authMiddleware, async (req, res, next) => {
       where: { commentId: +commentId },
     });
     return res.status(200).redirect(`/api/postView/${isExistComment.postId}`);
-  } catch (err) {
-    next(err);
+  } catch (error) {
+    next(error);
   }
 });
 
@@ -103,8 +103,8 @@ router.delete(
         where: { commentId: +commentId },
       });
       return res.status(200).redirect(`/api/postView/${isExistComment.postId}`);
-    } catch (err) {
-      next(err);
+    } catch (error) {
+      next(error);
     }
   }
 );
