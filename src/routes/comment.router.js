@@ -5,24 +5,27 @@ import authMiddleware from "../middlewares/auth.middleware.js";
 const router = express.Router();
 
 //댓글 작성 API
-router.post("/postView/:postId", authMiddleware, async (req, res, next) => {
-  try {
-    const { userId } = req.user;
-    const { content } = req.body;
-    const { postId } = req.params;
-    const comment = await prisma.comments.create({
-      data: {
-        userId: +userId,
-        postId: +postId,
-        content,
-        createdAt: new Date(),
-      },
-    });
-    return res.status(201).redirect(`/api/postView/${postId}`);
-  } catch (error) {
-    next(error);
+router.post(
+  "/postView/comments/:postId",
+  authMiddleware,
+  async (req, res, next) => {
+    try {
+      const { userId } = req.user;
+      const { content } = req.body;
+      const { postId } = req.params;
+      const comment = await prisma.comments.create({
+        data: {
+          userId: +userId,
+          postId: +postId,
+          content,
+        },
+      });
+      return res.status(201).redirect(`/api/postView/${postId}`);
+    } catch (error) {
+      next(error);
+    }
   }
-});
+);
 
 //댓글 조회 API(게시물 조회 API랑 병합할수도...)
 router.get("/postView/:postId", async (req, res, next) => {
@@ -58,34 +61,38 @@ router.get("/postView/:postId", async (req, res, next) => {
 });
 
 //댓글 수정 API
-router.patch("/postView/:commentId", authMiddleware, async (req, res, next) => {
-  try {
-    const { commentId } = req.params;
-    const { content } = req.body;
+router.patch(
+  "/postView/comments/:commentId",
+  authMiddleware,
+  async (req, res, next) => {
+    try {
+      const { commentId } = req.params;
+      const { content } = req.body;
 
-    const isExistComment = await prisma.comments.findFirst({
-      where: { commentId: +commentId },
-    });
-    if (!isExistComment)
-      return res.status(404).json({ message: "댓글 조회에 실패하였습니다." });
-    if (isExistComment.userId !== req.user.userId)
-      return res
-        .status(401)
-        .json({ message: "댓글을 수정할 권한이 없습니다." });
+      const isExistComment = await prisma.comments.findFirst({
+        where: { commentId: +commentId },
+      });
+      if (!isExistComment)
+        return res.status(404).json({ message: "댓글 조회에 실패하였습니다." });
+      if (isExistComment.userId !== req.user.userId)
+        return res
+          .status(401)
+          .json({ message: "댓글을 수정할 권한이 없습니다." });
 
-    const modifiedData = await prisma.comments.update({
-      data: { content },
-      where: { commentId: +commentId },
-    });
-    return res.status(200).redirect(`/api/postView/${isExistComment.postId}`);
-  } catch (error) {
-    next(error);
+      const modifiedData = await prisma.comments.update({
+        data: { content },
+        where: { commentId: +commentId },
+      });
+      return res.status(303).redirect(`/api/postView/${isExistComment.postId}`);
+    } catch (error) {
+      next(error);
+    }
   }
-});
+);
 
 //댓글 삭제 API
 router.delete(
-  "/postView/:commentId",
+  "/postView/comments/:commentId",
   authMiddleware,
   async (req, res, next) => {
     try {
@@ -102,7 +109,7 @@ router.delete(
       await prisma.comments.delete({
         where: { commentId: +commentId },
       });
-      return res.status(200).redirect(`/api/postView/${isExistComment.postId}`);
+      return res.status(303).redirect(`/api/postView/${isExistComment.postId}`);
     } catch (error) {
       next(error);
     }
