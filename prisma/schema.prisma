@@ -20,6 +20,7 @@ model Users {
 
   posts Posts[]
   comments Comments[]
+  likes Likes[]
   refreshToken RefreshToken?
 
 }
@@ -42,7 +43,9 @@ model Posts {
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 
+  
   comments Comments[]
+  likes Likes[]
   users Users @relation(fields: [userId], references: [userId], onDelete: Cascade)
 
 }
@@ -58,4 +61,14 @@ model Comments {
   users Users @relation(fields: [userId], references: [userId], onDelete: Cascade)
   posts Posts @relation(fields: [postId], references: [postId], onDelete: Cascade)
 
+}
+
+model Likes {
+  likeId    Int @id @default(autoincrement())
+  userId    Int
+  postId    Int
+  commentId Int?
+
+  users    Users @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  posts    Posts @relation(fields: [postId], references: [postId], onDelete: Cascade)
 }
