@@ -7,30 +7,31 @@
 //         - 프론트엔드에서 게시물 작성, 수정 및 삭제를 할 때마다 조회 API를 다시 호출하여 자연스럽게 최신의 게시물 내용을 화면에 보여줄 수 있도록 해야 합니다!
 import express from "express";
 import { prisma } from "../utils/prisma/index.js";
+import authMiddleware from "../middlewares/auth.middleware.js";
+
 const router = express.Router();
-//게시물 작성 API
+//게시물 작성 API(근데 이거 한 게시물에 사진 여러장 어떻게 넣지?)
 router.post("/postView", authMiddleware, async (req, res, next) => {
   try {
     const { userId, nickname } = req.locals.user;
-    const { title, content, photo } = req.body;
+    const { title, content, photos } = req.body;
+
+    const photosJson = JSON.stringify(photos);
     const post = await prisma.posts.create({
       data: {
-        id: +userId,
+        userId: +userId,
         title,
         author: nickname,
         content,
-        photos: {
-          photo,
-        },
+        photos: photosJson,
       },
     });
-
     return res.status(201).json({
       message: "게시물 작성이 완료되었습니다.",
       data: {
         title: post.title,
         author: post.author,
-        photo: post.photo,
+        photos: post.photos,
         createdAt: post.createdAt,
       },
     });
@@ -38,6 +39,7 @@ router.post("/postView", authMiddleware, async (req, res, next) => {
     next(error);
   }
 });
+
 //게시물 조회 API
 router.get("/postView/:postId", async (req, res, next) => {
   try {
@@ -45,17 +47,12 @@ router.get("/postView/:postId", async (req, res, next) => {
 
     const post = await prisma.posts.findFirst({
       where: {
-        userId: +userId,
         postId: +postId,
       },
       select: {
         title: true,
         content: true,
-        photos: {
-          select: {
-            photo: true,
-          },
-        },
+        photos: true,
         createdAt: true,
         updatedAt: true,
       },
@@ -67,13 +64,7 @@ router.get("/postView/:postId", async (req, res, next) => {
     }
     return res.status(200).json({
       message: "게시물이 조회되었습니다.",
-      data: {
-        title: post.title,
-        author: post.author,
-        photos: {
-          photo: post.photo,
-        },
-      },
+      data: post,
     });
   } catch (error) {
     next(error);
@@ -84,7 +75,9 @@ router.put("/postView/:postId", authMiddleware, async (req, res, next) => {
   try {
     const { postId } = req.params;
     const { userId } = req.locals.user;
-    const { title, content, photo } = req.body;
+    const { title, content, photos } = req.body;
+
+    const photosJson = JSON.stringify(photos);
 
     const post = await prisma.posts.update({
       where: {
@@ -94,30 +87,22 @@ router.put("/postView/:postId", authMiddleware, async (req, res, next) => {
       data: {
         title,
         content,
-        photos: {
-          update: {
-            where: {
-              postId: +postId,
-              photoId: +photoId,
-            },
-            data: {
-              photo,
-            },
-          },
-        },
+        photos: photosJson,
+      },
+      select: {
+        title: true,
+        content: true,
+        photos: true,
+        updatedAt: true,
       },
     });
 
-    if (!resume)
+    if (!post)
       return res.status(404).json({ message: "게시물 수정에 실패하였습니다." });
 
     return res.status(201).json({
       message: "게시물 수정이 완료되었습니다.",
-      data: {
-        title: post.title,
-        content: post.content,
-        photo: post.photo,
-      },
+      data: post,
     });
   } catch (error) {
     next(error);
@@ -128,19 +113,28 @@ router.delete("/postView/:postId", authMiddleware, async (req, res, next) => {
   try {
     const { userId } = req.locals.user;
     const { postId } = req.params;
-    const post = await prisma.posts.delete({
+
+    const post = await prisma.posts.findFirst({
       where: {
         postId: +postId,
         userId: +userId,
       },
     });
+
     if (!post)
-      return res.status(404).json({ message: "게시물을 삭제할 수 없습니다." });
+      return res.status(404).json({ message: "게시물을 찾을 수 없습니다." });
+
+    await prisma.posts.delete({
+      where: {
+        postId: +postId,
+        userId: +userId,
+      },
+    });
+
     return res.status(200).json({ message: "게시물이 삭제되었습니다." });
   } catch (error) {
     next(error);
   }
 });
 
-//
 export default router;

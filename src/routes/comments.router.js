@@ -13,13 +13,12 @@ router.post(
       const { userId } = req.locals.user;
       const { content } = req.body;
       const { postId } = req.params;
-      const comment = await prisma.comments.create({
+
+      await prisma.comments.create({
         data: {
           userId: +userId,
           postId: +postId,
           content,
-          //createdAt은 이미 default 값이 있기 때문에 다시 지정 안해도 됨
-          // createdAt: new Date(),
         },
       });
       return res.status(201).redirect(`/api/postView/${postId}`);
@@ -30,7 +29,7 @@ router.post(
 );
 
 //댓글 조회 API(게시물 조회 API랑 병합할수도...)
-router.get("/postView/:postId", async (req, res, next) => {
+router.get("/postView/comment/:postId", async (req, res, next) => {
   try {
     const { postId } = req.params;
     const data = await prisma.posts.findFirst({
@@ -64,7 +63,7 @@ router.get("/postView/:postId", async (req, res, next) => {
 });
 
 //댓글 수정 API
-//CUD 는 라우터 경로 겹치면 commentId와 postId가 겹칠 경우 에러가 나거나, 예상치 못한게 지워질 수 있을 것 같음
+//CUD 는 라우터 경로 겹치면 commentId와 postId가 겹칠 경우 에러가 나거나, 예상치 못한게 지워질 수 있을 것 같음ds
 router.patch(
   "/postView/comment/:commentId",
   authMiddleware,
@@ -88,7 +87,10 @@ router.patch(
         data: { content },
         where: { commentId: +commentId },
       });
-      return res.status(200).redirect(`/api/postView/${isExistComment.postId}`);
+      return res.status(200).render("main", {
+        message: "댓글이 수정되었습니다.",
+        path: modifiedData.postId,
+      });
     } catch (err) {
       next(err);
     }
@@ -107,18 +109,27 @@ router.delete(
       const isExistComment = await prisma.comments.findFirst({
         where: { commentId: +commentId },
       });
+
+      const postId = isExistComment.postId;
       if (!isExistComment)
         return res.status(404).json({ message: "댓글 조회에 실패하였습니다." });
       if (isExistComment.userId !== userId)
         return res
           .status(401)
           .json({ message: "댓글을 삭제할 권한이 없습니다." });
+
       await prisma.comments.delete({
-        where: { commentId: +commentId },
+        where: {
+          commentId: isExistComment.commentId,
+        },
       });
-      return res.status(200).redirect(`/api/postView/${isExistComment.postId}`);
-    } catch (err) {
-      next(err);
+
+      return res.status(200).render("main", {
+        message: "댓글이 삭제되었습니다.",
+        path: postId,
+      });
+    } catch (error) {
+      next(error);
     }
   }
 );
