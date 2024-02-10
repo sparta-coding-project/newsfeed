@@ -4,6 +4,12 @@ import "dotenv/config"
 
 const { TOKEN_SECRET_KEY } = process.env;
 
+export const createEmailToken = (userData) => {
+  return jwt.sign(userData, TOKEN_SECRET_KEY, {
+    expiresIn: "1h"
+  })
+}
+
 /**
  * @param {Object} userData
  * @returns {String}
@@ -18,7 +24,7 @@ export const createAccessToken = (userData) => {
  * @param {String} token
  * @returns {Object}
  */
-export const verifyAccessToken = (token) => {
+export const verifyToken = (token) => {
   try {
     return jwt.verify(token, TOKEN_SECRET_KEY);
   } catch (err) {
@@ -34,14 +40,6 @@ export const createRefreshToken = (userData) => {
   return jwt.sign(userData, TOKEN_SECRET_KEY, {
     expiresIn: "2d",
   });
-};
-
-/**
- * @param {String} token
- * @returns {Object}
- */
-export const verifyRefreshToken = (token) => {
-  return jwt.verify(token, TOKEN_SECRET_KEY);
 };
 
 export const generateTokens = async (res, userData) => {

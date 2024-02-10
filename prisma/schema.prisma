@@ -8,63 +8,66 @@ datasource db {
 }
 
 model Users {
-  userId       Int @id  @unique @default(autoincrement()) 
-  username     String   @unique 
-  nickname     String   
-  email        String   @unique 
-  age          Int?     
-  introduction String? 
-  password     String 
-  createdAt    DateTime @default(now()) 
-  updatedAt    DateTime @default(now()) @updatedAt 
+  userId       Int      @id @unique @default(autoincrement())
+  username     String   @unique
+  nickname     String
+  email        String   @unique
+  age          Int?
+  introduction String?
+  password     String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @default(now()) @updatedAt
 
-  posts Posts[]
-  comments Comments[]
+  posts        Posts[]
+  comments     Comments[]
   refreshToken RefreshToken?
-
 }
 
 model RefreshToken {
-  refreshTokenId Int @id @default(autoincrement())
-  userId Int @unique
-  refreshToken String @db.Text
+  refreshTokenId Int    @id @default(autoincrement())
+  userId         Int    @unique
+  refreshToken   String @db.Text
 
   users Users @relation(fields: [userId], references: [userId], onDelete: Cascade)
 }
 
 model Posts {
-  postId Int @id @default(autoincrement())
-  userId Int
-  title String
-  author String
-  content String @db.Text
+  postId    Int      @id @default(autoincrement())
+  userId    Int
+  title     String
+  author    String
+  content   String   @db.Text
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 
   comments Comments[]
-  photos Photos[]
-  users Users @relation(fields: [userId], references: [userId], onDelete: Cascade)
-
+  photos   Photos[]
+  users    Users      @relation(fields: [userId], references: [userId], onDelete: Cascade)
 }
 
 model Comments {
-  commentId Int  @id  @default(autoincrement())
+  commentId Int      @id @default(autoincrement())
   userId    Int
   postId    Int
-  content   String? @db.Text 
+  content   String?  @db.Text
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 
   users Users @relation(fields: [userId], references: [userId], onDelete: Cascade)
   posts Posts @relation(fields: [postId], references: [postId], onDelete: Cascade)
-
 }
 
 model Photos {
-  photoId Int @id @default(autoincrement())
-  postId Int
-  photo String @db.Text
+  photoId Int    @id @default(autoincrement())
+  postId  Int
+  photo   String @db.Text
 
   posts Posts @relation(fields: [postId], references: [postId], onDelete: Cascade)
+}
 
+model Valid {
+  code        String   @db.Text
+  email       String   @unique @id
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
 }
