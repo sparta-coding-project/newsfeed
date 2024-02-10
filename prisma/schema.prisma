@@ -9,7 +9,7 @@ datasource db {
 
 model Users {
   userId       Int      @id @unique @default(autoincrement())
-  username     String   @unique
+  username     String   
   nickname     String
   email        String   @unique
   age          Int?

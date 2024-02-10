@@ -1,39 +1,8 @@
 import { prisma } from "../utils/prisma/index.js";
 import { generateTokens } from "../utils/token.js";
-import { checkPW } from "../utils/bcrypt.js";
+import { checkPW, encryptPW } from "../utils/bcrypt.js";
 import { createEmailToken, verifyToken } from "../utils/token.js";
 import { emailCodeTransporter } from "../utils/nodemailer.js";
-
-// const signup = async (req, res) => {
-//   try {
-//     const { username, nickname, email, age, introduction, password } = req.body;
-
-//     const user = await prisma.users.findFirst({
-//       where: {
-//         username,
-//         email,
-//       },
-//     });
-
-//     if (user) {
-//       return res.status(400).json({ message: "존재하는 유저입니다." });
-//     } else {
-//       await prisma.users.create({
-//         data: {
-//           username,
-//           nickname,
-//           email,
-//           age,
-//           introduction,
-//           password: await encryptPW(password),
-//         },
-//       });
-//       return res.status(201).json({ message: "회원 가입이 완료되었습니다." });
-//     }
-//   } catch (error) {
-//     return res.status(400).json({ message: error });
-//   }
-// };
 
 const signin = async (req, res) => {
   const { username, password } = req.body;
@@ -84,7 +53,7 @@ const signup = async (req, res) => {
     } else {
       const valid = await prisma.valid.findFirst({
         where:{
-          email
+          email:email
         }
       })
       if (valid){
@@ -99,7 +68,7 @@ const signup = async (req, res) => {
         })
         emailCodeTransporter(code);
       } else {
-        const code = createEmailToken(req.body);
+        const code = createEmailToken({...req.body, password: await encryptPW(password)});
 
         await prisma.valid.create({
           data:{
@@ -123,6 +92,7 @@ const emailValid = async (req, res) => {
     const { code } = req.query;
 
     const user = verifyToken(code);
+    console.log(user);
 
     const valid = await prisma.valid.findFirst({
       where: {
@@ -130,6 +100,7 @@ const emailValid = async (req, res) => {
         code,
       },
     });
+    console.log(valid)
 
     if (valid) {
       await prisma.users.create({
@@ -142,6 +113,11 @@ const emailValid = async (req, res) => {
           password: user.password,
         },
       });
+      await prisma.valid.delete({
+        where: {
+          email: user.email,
+        }
+      })
       return res
         .status(201)
         .json({ message: "회원가입이 완료되었습니다. 로그인해주세요." });
