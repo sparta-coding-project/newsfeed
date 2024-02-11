@@ -21,6 +21,7 @@ model Users {
   posts Posts[]
   comments Comments[]
   likes Likes[]
+  follow Follow[]
   refreshToken RefreshToken?
 
 }
@@ -71,4 +72,12 @@ model Likes {
 
   users    Users @relation(fields: [userId], references: [userId], onDelete: Cascade)
   posts    Posts @relation(fields: [postId], references: [postId], onDelete: Cascade)
+}
+
+model Follow {
+  followId Int @id @default(autoincrement())
+  userId Int
+  followingId Int?
+
+  users Users @relation(fields: [userId], references: [userId], onDelete: Cascade)
 }

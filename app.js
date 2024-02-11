@@ -3,6 +3,7 @@ import cookieParser from "cookie-parser";
 import express from "express";
 import dotenv from "dotenv";
 import commentsRouter from "./src/routes/comments.router.js";
+import followRouter from "./src/routes/follow.router.js";
 import likesRouter from "./src/routes/likes.router.js";
 import loginRouter from "./src/routes/login.router.js";
 import newsFeedRouter from "./src/routes/newsfeed.router.js";
@@ -26,6 +27,7 @@ app.set("views", "./views");
 
 app.use("/api", [
   commentsRouter,
+  followRouter,
   likesRouter,
   loginRouter,
   postsRouter,

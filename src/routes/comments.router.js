@@ -21,7 +21,10 @@ router.post(
           content,
         },
       });
-      return res.status(303).redirect(`/api/postView/${postId}`);
+      return res.status(303).render("post", {
+        message: "댓글이 작성되었습니다.",
+        path: postId,
+      });
     } catch (error) {
       next(error);
     }
@@ -87,7 +90,7 @@ router.patch(
         data: { content },
         where: { commentId: +commentId },
       });
-      return res.status(303).render("main", {
+      return res.status(303).render("post", {
         message: "댓글이 수정되었습니다.",
         path: modifiedData.postId,
       });
@@ -124,7 +127,7 @@ router.delete(
         },
       });
 
-      return res.status(303).render("main", {
+      return res.status(303).render("post", {
         message: "댓글이 삭제되었습니다.",
         path: postId,
       });
