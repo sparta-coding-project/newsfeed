@@ -15,10 +15,14 @@ const signin = async (req, res) => {
 
   if (user) {
     if (checkPW(password, user.password)) {
-      const tokens = await generateTokens(res, { userId: user.userId });
+      req.session.user = {
+        userId: user.userId,
+        email: user.email
+      }
+      // const tokens = await generateTokens(res, { userId: user.userId });
       return res
         .status(200)
-        .json({ message: "로그인이 완료되었습니다.", data: tokens });
+        .json({ message: "로그인이 완료되었습니다."});
     } else {
       return res.status(401).json({ message: "비밀번호가 틀렸습니다." });
     }
