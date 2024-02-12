@@ -26,15 +26,8 @@ router.post("/postView", authMiddleware, async (req, res, next) => {
         photos: photosJson,
       },
     });
-    // return res.status(201).json({
-    //   message: "게시물 작성이 완료되었습니다.",
 
-    // });
-
-    return res.status(303).render("post", {
-      message: "게시물이 작성되었습니다.",
-      path: post.postId,
-    });
+    return res.status(303).render("post", { path: post.postId });
   } catch (error) {
     next(error);
   }
@@ -51,6 +44,7 @@ router.get("/postView/:postId", async (req, res, next) => {
       },
       select: {
         title: true,
+        author: true,
         content: true,
         photos: true,
         createdAt: true,
@@ -62,9 +56,8 @@ router.get("/postView/:postId", async (req, res, next) => {
         .status(404)
         .json({ message: "해당 게시물이 존재하지 않습니다." });
     }
-    return res.status(200).json({
-      data: post,
-    });
+
+    return res.status(200).json({ data: post, path: post.postId });
   } catch (error) {
     next(error);
   }
@@ -99,10 +92,7 @@ router.patch("/postView/:postId", authMiddleware, async (req, res, next) => {
     if (!post)
       return res.status(404).json({ message: "게시물 수정에 실패하였습니다." });
 
-    return res.status(303).render("post", {
-      message: "게시물이 작성되었습니다.",
-      path: postId,
-    });
+    return res.status(303).render("post", { path: post.postId });
   } catch (error) {
     next(error);
   }

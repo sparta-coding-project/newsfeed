@@ -4,15 +4,71 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+      crossorigin="anonymous"
+    ></script>
     <style></style>
   </head>
   <body>
-    <div id="message"><%= message %></div>
+    <h1>국밥이 여행하는 곳</h1>
+    <div id="postList"></div>
 
     <script>
-      //프론트엔드 구축할거면 여기 prompt 들어가서 삭제 성공 message 띄워야 함
-      window.location.href = `/api/postView/<%= path %>`;
+      const options = {
+        method: "GET",
+      };
+      // ejs 서버 측 문법으로 path 삽입해 줘야 함
+      const url = `http://localhost:6100/api/postView/6`;
+      async function forPost() {
+        console.log("2");
+        return fetch(url, options)
+          .then((response) => {
+            if (response.ok === false) {
+              console.log("response???", response);
+              throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            return response.json();
+          })
+          .catch((error) => {
+            console.error(error);
+            throw error;
+          });
+      }
+      forPost().then((data) => {
+        const posts = data.data;
+        const postId = posts.postId;
+        const title = posts.title;
+        const author = posts.author;
+        const content = posts.content;
+        const createdAt = posts.createdAt;
+        const updatedAt = posts.updatedAt;
+        let photo = [];
+        for (let key in JSON.parse(posts.photos)) {
+          const photoList = JSON.parse(posts.photos)[key];
+          photo += `<img src = ${photoList} alt = ${key} style = "width: 250px; height: 200px">`;
+        }
+        const temp_html = `
+                              <div class="col">
+                              <div class="card" type = "Button" postId = "${postId}" >
+                              <div class="card-img-top" alt="newsfeed contents">
+                              ${photo}
+                              </div>
+                              <div class= "card-body" >
+                                  <h5 class="card-title" style = "font-weight: bold; font-size: 195%">${title}</h5>
+                                  <p class="card-text" style = "font-size: 140%">${author}</p>
+                                  <p class="card-text" style = "font-size: 140%">${content}</p>
+                                  <p class="card-text" style = "font-weight: bold; font-size: 160%; color: yellow;"">date: ${createdAt}</p>
+                                  <p class="card-text" style = "font-weight: bold; font-size: 160%; color: yellow;"">date: ${updatedAt}</p>
+                                  </div>
+                                  </div>
+                                  </div>
+                              `;
+        document.getElementById("postList").innerHTML = temp_html;
+        console.log("3");
+      });
     </script>
   </body>
 

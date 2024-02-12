@@ -39,6 +39,7 @@ router.post(
       if (checkFollowing) {
         await prisma.follow.delete({
           where: {
+            followId: checkFollowing.followId,
             userId: +userId,
             followingId: +userProfile,
           },

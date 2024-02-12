@@ -16,6 +16,7 @@ router.get("/profile", authMiddleware, async (req, res, next) => {
         userId: true,
         username: true,
         nickname: true,
+        profileImage: true,
         email: true,
         age: true,
         introduction: true,
@@ -40,6 +41,7 @@ router.get("/profile/:userProfile", authMiddleware, async (req, res, next) => {
       where: { userId: +userProfile },
       select: {
         nickname: true,
+        profileImage: true,
         email: true,
         age: true,
         introduction: true,
@@ -59,6 +61,7 @@ router.patch("/profile", authMiddleware, async (req, res, next) => {
     const {
       username,
       nickname,
+      profileImage,
       age,
       introduction,
       password,
@@ -93,6 +96,7 @@ router.patch("/profile", authMiddleware, async (req, res, next) => {
         data: {
           username,
           nickname,
+          profileImage,
           age,
           introduction,
         },
@@ -102,6 +106,7 @@ router.patch("/profile", authMiddleware, async (req, res, next) => {
         select: {
           username: true,
           nickname: true,
+          profileImage: true,
           age: true,
           introduction: true,
           createdAt: true,
@@ -129,6 +134,7 @@ router.patch("/profile", authMiddleware, async (req, res, next) => {
         select: {
           username: true,
           nickname: true,
+          profileImage: true,
           age: true,
           introduction: true,
           createdAt: true,

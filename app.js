@@ -7,7 +7,7 @@ import followRouter from "./src/routes/follow.router.js";
 import likesRouter from "./src/routes/likes.router.js";
 import loginRouter from "./src/routes/login.router.js";
 import newsFeedRouter from "./src/routes/newsfeed.router.js";
-import profileRouter from "./src/routes/pofile.router.js";
+import profileRouter from "./src/routes/profile.router.js";
 import postsRouter from "./src/routes/posts.router.js";
 
 dotenv.config();
@@ -25,6 +25,14 @@ app.set("view engine", "ejs");
 // EJS 템플릿 파일이 있는 디렉토리 설정 (선택 사항)
 app.set("views", "./views");
 
+app.use(
+  express.static(
+    "C:\\Users\\3050ti\\Desktop\\Coding-Camp\\6th.Assignment\\photos"
+  )
+);
+//프로필 이미지 - 아마존 sw 경로(url)) 들어갈 예정
+// app.use(express.static('https://www.aws.s3~/'));
+
 app.use("/api", [
   commentsRouter,
   followRouter,
@@ -34,6 +42,14 @@ app.use("/api", [
   newsFeedRouter,
   profileRouter,
 ]);
+
+app.get("/main", (req, res) => {
+  return res.render("newsfeed");
+});
+
+app.get("/view_the_post", (req, res) => {
+  return res.render("post");
+});
 
 app.listen(process.env.PORT, () => {
   console.log(process.env.PORT);

@@ -9,7 +9,15 @@ const router = express.Router();
 //1. 회원가입 API
 router.post("/signup", async (req, res, next) => {
   try {
-    const { username, nickname, email, age, introduction, password } = req.body;
+    const {
+      username,
+      nickname,
+      profileImage,
+      email,
+      age,
+      introduction,
+      password,
+    } = req.body;
 
     const user = await prisma.users.findFirst({
       where: {
@@ -27,6 +35,7 @@ router.post("/signup", async (req, res, next) => {
         data: {
           username,
           nickname,
+          profileImage,
           email,
           age,
           introduction,

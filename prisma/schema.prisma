@@ -7,13 +7,16 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+
 model Users {
   userId       Int @id  @unique @default(autoincrement()) 
   username     String   @unique 
-  nickname     String   
+  nickname     String  
+  profileImage String? @db.Text
   email        String   @unique 
   age          Int?     
-  introduction String? 
+  introduction String?
+
   password     String 
   createdAt    DateTime @default(now()) 
   updatedAt    DateTime @default(now()) @updatedAt 
