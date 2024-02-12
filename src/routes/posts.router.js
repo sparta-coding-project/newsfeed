@@ -27,7 +27,7 @@ router.post("/postView", authMiddleware, async (req, res, next) => {
       },
     });
 
-    return res.status(303).render("post", { path: post.postId });
+    return res.status(303).render("post");
   } catch (error) {
     next(error);
   }

@@ -10,20 +10,20 @@ router.post(
   authMiddleware,
   async (req, res, next) => {
     try {
-      const { userId } = req.locals.user;
+      const { userId, nickname } = req.locals.user;
       const { content } = req.body;
       const { postId } = req.params;
 
-      await prisma.comments.create({
+      const comment = await prisma.comments.create({
         data: {
           userId: +userId,
           postId: +postId,
+          author: nickname,
           content,
         },
       });
       return res.status(303).render("post", {
         message: "댓글이 작성되었습니다.",
-        path: postId,
       });
     } catch (error) {
       next(error);
@@ -35,7 +35,7 @@ router.post(
 router.get("/postView/comment/:postId", async (req, res, next) => {
   try {
     const { postId } = req.params;
-    const data = await prisma.comments.findMany({
+    const comment = await prisma.comments.findMany({
       where: {
         postId: +postId,
       },
@@ -43,6 +43,7 @@ router.get("/postView/comment/:postId", async (req, res, next) => {
         commentId: true,
         userId: true,
         postId: true,
+        author: true,
         content: true,
         createdAt: true,
         updatedAt: true,
@@ -52,10 +53,10 @@ router.get("/postView/comment/:postId", async (req, res, next) => {
       },
     });
 
-    if (!data)
+    if (!comment)
       return res.status(404).json({ message: "댓글이 존재하지 않습니다." });
 
-    return res.status(200).json({ data });
+    return res.status(200).json({ data: comment });
   } catch (error) {
     next(error);
   }

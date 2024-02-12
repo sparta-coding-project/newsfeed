@@ -30,20 +30,20 @@ model Users {
 }
 
 model RefreshToken {
-  refreshTokenId Int @id @default(autoincrement())
-  userId Int @unique
-  refreshToken String @db.Text
+  refreshTokenId Int    @id @default(autoincrement())
+  userId         Int    @unique
+  refreshToken   String @db.Text
 
   users Users @relation(fields: [userId], references: [userId], onDelete: Cascade)
 }
 
 model Posts {
-  postId Int @id @default(autoincrement())
-  userId Int
-  title String
-  author String
-  content String @db.Text
-  photos String? @db.Text
+  postId    Int @id @default(autoincrement())
+  userId    Int
+  title     String
+  author    String   @default("")
+  content   String   @db.Text
+  photos    String?  @db.Text
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 
@@ -58,7 +58,8 @@ model Comments { //usernickname 있어야 함
   commentId Int  @id  @default(autoincrement())
   userId    Int 
   postId    Int
-  content   String? @db.Text 
+  author    String   @default("")
+  content   String?  @db.Text 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 
@@ -78,8 +79,8 @@ model Likes {
 }
 
 model Follow {
-  followId Int @id @default(autoincrement())
-  userId Int
+  followId    Int @id @default(autoincrement())
+  userId      Int
   followingId Int?
 
   users Users @relation(fields: [userId], references: [userId], onDelete: Cascade)
