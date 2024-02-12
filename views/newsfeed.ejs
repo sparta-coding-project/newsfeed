@@ -23,7 +23,7 @@
         method: "GET",
       };
       const url = "http://localhost:6100/api/newsfeed";
-      async function forNewsfeed() {
+      async function fetchData() {
         return fetch(url, options)
           .then((response) => {
             if (response.ok === false) {
@@ -37,7 +37,7 @@
             throw error;
           });
       }
-      forNewsfeed().then((data) => {
+      fetchData().then((data) => {
         const posts = data.data;
         let temp_html = "";
 

@@ -35,31 +35,27 @@ router.post(
 router.get("/postView/comment/:postId", async (req, res, next) => {
   try {
     const { postId } = req.params;
-    const data = await prisma.posts.findFirst({
+    const data = await prisma.comments.findMany({
       where: {
         postId: +postId,
       },
       select: {
-        comments: {
-          select: {
-            commentId: true,
-            userId: true,
-            postId: true,
-            content: true,
-            createdAt: true,
-            updatedAt: true,
-          },
-          orderBy: {
-            createdAt: "desc",
-          },
-        },
+        commentId: true,
+        userId: true,
+        postId: true,
+        content: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+      orderBy: {
+        createdAt: "desc",
       },
     });
 
-    if (!data.comments)
+    if (!data)
       return res.status(404).json({ message: "댓글이 존재하지 않습니다." });
 
-    return res.status(200).json({ data: data.comments });
+    return res.status(200).json({ data });
   } catch (error) {
     next(error);
   }

@@ -15,16 +15,15 @@
     <h1>국밥이 여행하는 곳</h1>
     <button type="button" class="btn btn-light" id="sign_in">로그인</button>
     <div id="postList"></div>
+    <div id="commentList"></div>
 
     <script>
       const postId = window.location.pathname.split("/")[2];
       const options = {
         method: "GET",
       };
-      let url = `http://localhost:6100/api/postView/${+postId}`;
-
-      //게시물 띄우기
-      async function forPost() {
+      //fetch 함수 정의(게시물, 댓글 router 활용)
+      async function fetchData(url) {
         return fetch(url, options)
           .then((response) => {
             if (response.ok === false) {
@@ -38,7 +37,12 @@
             throw error;
           });
       }
-      forPost().then((data) => {
+      //게시글, 댓글 url
+      const postUrl = `http://localhost:6100/api/postView/${+postId}`;
+      const commentUrl = `http://localhost:6100/api/postView/comment/${+postId}`;
+
+      //게시물 띄우기
+      fetchData(postUrl).then((data) => {
         const posts = data.data;
         const postId = posts.postId;
         const title = posts.title;
@@ -49,7 +53,6 @@
         let photo = [];
         for (let key in JSON.parse(posts.photos)) {
           const photoList = JSON.parse(posts.photos)[key];
-          console.log("s1", photoList);
           photo += `<img src = "http://localhost:6100/${photoList}" alt = ${key} style = "width: 250px; height: 200px">`;
         }
         const temp_html = `
@@ -71,6 +74,34 @@
         document.getElementById("postList").innerHTML = temp_html;
       });
 
+      //게시물 댓글 띄우기
+      fetchData(commentUrl).then((data) => {
+        console.log("comments", data);
+        const comments = data.data;
+        let temp_html = "";
+
+        comments.forEach((comment) => {
+          const commentId = comment.commentId;
+          const title = comment.title;
+          const content = comment.content;
+          const createdAt = comment.createdAt;
+          const updatedAt = comment.updatedAt;
+
+          temp_html += `
+                              <div class="col">
+                              <div class="card" type = "Button" postId = "${commentId}" >
+                              <div class= "card-body" >
+                                  <h5 class="card-title" style = "font-weight: bold; font-size: 195%">${author}</h5>
+                                  <p class="card-text" style = "font-size: 140%">${content}</p>
+                                  <p class="card-text" style = "font-weight: bold; font-size: 160%; color: yellow;"">date: ${createdAt}</p>
+                                  <p class="card-text" style = "font-weight: bold; font-size: 160%; color: yellow;"">date: ${updatedAt}</p>
+                                  </div>
+                                  </div>
+                                  </div>
+                              `;
+        });
+        document.getElementById("commentList").innerHTML = temp_html;
+      });
       //로그인 페이지로 이동
       document.getElementById("sign_in").addEventListener("click", () => {
         window.location.href = "http://localhost:6100/login";
