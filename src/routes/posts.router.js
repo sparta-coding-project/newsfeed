@@ -37,7 +37,6 @@ router.post("/postView", authMiddleware, async (req, res, next) => {
 router.get("/postView/:postId", async (req, res, next) => {
   try {
     const { postId } = req.params;
-
     const post = await prisma.posts.findFirst({
       where: {
         postId: +postId,
@@ -57,7 +56,7 @@ router.get("/postView/:postId", async (req, res, next) => {
         .json({ message: "해당 게시물이 존재하지 않습니다." });
     }
 
-    return res.status(200).json({ data: post, path: post.postId });
+    return res.status(200).json({ data: post });
   } catch (error) {
     next(error);
   }

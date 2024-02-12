@@ -13,20 +13,21 @@
   </head>
   <body>
     <h1>국밥이 여행하는 곳</h1>
+    <button type="button" class="btn btn-light" id="sign_in">로그인</button>
     <div id="postList"></div>
 
     <script>
+      const postId = window.location.pathname.split("/")[2];
       const options = {
         method: "GET",
       };
-      // ejs 서버 측 문법으로 path 삽입해 줘야 함
-      const url = `http://localhost:6100/api/postView/6`;
+      let url = `http://localhost:6100/api/postView/${+postId}`;
+
+      //게시물 띄우기
       async function forPost() {
-        console.log("2");
         return fetch(url, options)
           .then((response) => {
             if (response.ok === false) {
-              console.log("response???", response);
               throw new Error(`HTTP error! Status: ${response.status}`);
             }
 
@@ -48,7 +49,8 @@
         let photo = [];
         for (let key in JSON.parse(posts.photos)) {
           const photoList = JSON.parse(posts.photos)[key];
-          photo += `<img src = ${photoList} alt = ${key} style = "width: 250px; height: 200px">`;
+          console.log("s1", photoList);
+          photo += `<img src = "http://localhost:6100/${photoList}" alt = ${key} style = "width: 250px; height: 200px">`;
         }
         const temp_html = `
                               <div class="col">
@@ -67,10 +69,12 @@
                                   </div>
                               `;
         document.getElementById("postList").innerHTML = temp_html;
-        console.log("3");
+      });
+
+      //로그인 페이지로 이동
+      document.getElementById("sign_in").addEventListener("click", () => {
+        window.location.href = "http://localhost:6100/login";
       });
     </script>
   </body>
-
-  <script></script>
 </html>

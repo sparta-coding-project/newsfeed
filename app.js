@@ -30,6 +30,7 @@ app.use(
     "C:\\Users\\3050ti\\Desktop\\Coding-Camp\\6th.Assignment\\photos"
   )
 );
+
 //프로필 이미지 - 아마존 sw 경로(url)) 들어갈 예정
 // app.use(express.static('https://www.aws.s3~/'));
 
@@ -43,11 +44,15 @@ app.use("/api", [
   profileRouter,
 ]);
 
+app.get("/login", (req, res) => {
+  return res.render("login");
+});
+
 app.get("/main", (req, res) => {
   return res.render("newsfeed");
 });
 
-app.get("/view_the_post", (req, res) => {
+app.get("/view_the_post/:postId", (req, res) => {
   return res.render("post");
 });
 

@@ -73,9 +73,10 @@ router.post("/signin", async (req, res, next) => {
     if (user) {
       if (validatedPW) {
         const tokens = await generateTokens(res, { userId: user.userId });
-        return res
-          .status(200)
-          .json({ message: "로그인이 완료되었습니다.", data: tokens });
+        return res.status(201).json({
+          message: "로그인이 완료되었습니다.",
+          data: tokens,
+        });
       } else {
         return res.status(401).json({ message: "비밀번호가 틀렸습니다." });
       }
@@ -90,7 +91,6 @@ router.post("/signin", async (req, res, next) => {
 //로그아웃 API
 router.post("/signout", authMiddleware, async (req, res, next) => {
   try {
-    console.log("s", res.cookie("refreshToken"));
     res.clearCookie("accessToken");
     res.clearCookie("refreshToken");
 
