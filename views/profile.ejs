@@ -1,65 +1,75 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
 
-    <style></style>
-  </head>
-  <body>
-    <h1>국밥이 여행하는 곳</h1>
-    <div id="postList"></div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Document</title>
 
-    <script>
-      // window.location.href = `/api/newsfeed`;
-      const options = {
-        method: "GET",
-      };
-      const url = "http://localhost:6100/api/newsfeed";
-      async function forNewsfeed() {
-        return fetch(url, options)
-          .then((response) => {
-            if (response.ok === false) {
-              console.log("response???", response);
-              throw new Error(`HTTP error! Status: ${response.status}`);
-            }
+  <style></style>
+</head>
 
-            return response.json();
-          })
-          .catch((error) => {
-            console.error(error);
-            throw error;
-          });
-      }
-      forNewsfeed().then((data) => {
-        let posts = data.data;
-        let temp_html = "";
+<body>
+  <h1>국밥이 여행하는 곳-프로필</h1>
+  <div id="profileList"></div>
 
-        posts.forEach((posts) => {
-          const postId = posts.postId;
-          const title = posts.title;
-          const author = posts.author;
-          const createdAt = posts.createdAt;
+  <script>
+    // window.location.href = `/api/profile`;
+    const options = {
+      method: "GET",
+    };
 
-          temp_html += `
+    async function forProfile(url) {
+      return fetch(url, options)
+        .then((response) => {
+          if (response.ok === false) {
+            console.log("response???", response);
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+
+          return response.json();
+        })
+        .catch((error) => {
+          console.error(error);
+          throw error;
+        });
+    }
+
+    const profileUrl = "http://localhost:6100/api/profile";
+
+    forProfile(profileUrl).then((data) => {
+      const profiles = data.data;
+      let temp_html = "";
+
+      const userId = profiles.userId;
+      const nickname = profiles.nickname;
+      const profileImage = profiles.profileImage;
+      const age = profiles.age;
+      const introduction = profiles.introduction;
+      const createdAt = profiles.createdAt;
+      const updatedAt = profiles.updatedAt;
+
+      const photo = `<img src = "http://localhost:6100/${profileImage}" style = "width: 250px; height: 200px">`;
+
+      temp_html += `
                               <div class="col">
-                              <div class="card" type = "Button" postId = "${postId}" >
-                              <class="card-img-top" alt="newsfeed contents">
+                              <div class="card" type = "Button" postId = "${userId}" >
+                              <div class="card-img-top">
+                              ${photo}
+                              </div>
                               <div class= "card-body" >
-                                  <h5 class="card-title" style = "font-weight: bold; font-size: 195%">${title}</h5>
-                                  <p class="card-text" style = "font-size: 140%">${author}</p>
+                                  <h5 class="card-title" style = "font-weight: bold; font-size: 195%">${nickname}</h5>
+                                  <h5>나이 : ${age}</h5>
+                                  <p class="card-text" style = "font-size: 140%">${introduction}</p>
                                   <p class="card-text" style = "font-weight: bold; font-size: 160%; color: yellow;"">date: ${createdAt}</p>
                                   </div>
                                   </div>
                                   </div>
                               `;
-        });
-        document.getElementById("postList").innerHTML = temp_html;
-        console.log(temp_html);
-      });
-    </script>
-  </body>
+      document.getElementById("profileList").innerHTML = temp_html;
+    });
 
-  <script></script>
+  </script>
+</body>
+
 </html>
