@@ -8,18 +8,24 @@ datasource db {
 }
 
 model Users {
-  userId       Int      @id @unique @default(autoincrement())
-  username     String   
+  userId       Int     @id @unique @default(autoincrement())
+  provider     String?
+  clientId     String?
+  username     String?
   nickname     String
-  email        String   @unique
+  profileImage String? @db.Text
+  email        String  @unique
   age          Int?
   introduction String?
-  password     String
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @default(now()) @updatedAt
+
+  password  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 
   posts        Posts[]
   comments     Comments[]
+  likes        Likes[]
+  follow       Follow[]
   refreshToken RefreshToken?
 }
 
@@ -35,13 +41,14 @@ model Posts {
   postId    Int      @id @default(autoincrement())
   userId    Int
   title     String
-  author    String
+  author    String   @default("")
   content   String   @db.Text
+  photos    String?  @db.Text
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 
   comments Comments[]
-  photos   Photos[]
+  likes    Likes[]
   users    Users      @relation(fields: [userId], references: [userId], onDelete: Cascade)
 }
 
@@ -49,6 +56,7 @@ model Comments {
   commentId Int      @id @default(autoincrement())
   userId    Int
   postId    Int
+  author    String   @default("")
   content   String?  @db.Text
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
@@ -57,17 +65,27 @@ model Comments {
   posts Posts @relation(fields: [postId], references: [postId], onDelete: Cascade)
 }
 
-model Photos {
-  photoId Int    @id @default(autoincrement())
-  postId  Int
-  photo   String @db.Text
+model Likes {
+  likeId    Int  @id @default(autoincrement())
+  userId    Int
+  postId    Int
+  commentId Int?
 
+  users Users @relation(fields: [userId], references: [userId], onDelete: Cascade)
   posts Posts @relation(fields: [postId], references: [postId], onDelete: Cascade)
 }
 
+model Follow {
+  followId    Int  @id @default(autoincrement())
+  userId      Int
+  followingId Int?
+
+  users Users @relation(fields: [userId], references: [userId], onDelete: Cascade)
+}
+
 model Valid {
-  code        String   @db.Text
-  email       String   @unique @id
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @default(now())
+  code      String   @db.Text
+  email     String   @id @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
 }

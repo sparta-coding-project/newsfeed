@@ -15,8 +15,9 @@ const transporter = nodemailer.createTransport({
 const emailTemplate = (code) => {
   const site = {
     name: "TravAll",
-    validUrl: `http://localhost:3002/api/emailValid?code=${code}`,
+    validUrl: `http://localhost:${process.env.PORT}/api/emailValid?code=${code}`,
   };
+
   return `<!DOCTYPE html>
   <html lang="ko">
   <head>
@@ -107,10 +108,10 @@ const emailTemplate = (code) => {
   </html>`;
 };
 
-export const emailCodeTransporter = (code) => {
+export const emailCodeTransporter = (code, email) => {
   const mailOptions = {
     from: process.env.EMAIL_USER, // 발신자
-    to: process.env.EMAIL_USER, // 수신자
+    to: email, // 수신자
     subject: "TravAll 인증 코드 발송", // 제목
     html: emailTemplate(code), // 본문
   };

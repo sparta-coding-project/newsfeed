@@ -4,42 +4,26 @@ import { checkPW, encryptPW } from "../utils/bcrypt.js";
 import { createEmailToken, verifyToken } from "../utils/token.js";
 import { emailCodeTransporter } from "../utils/nodemailer.js";
 
-const signin = async (req, res) => {
-  const { username, password } = req.body;
-
-  const user = await prisma.users.findFirst({
-    where: {
-      username,
-    },
-  });
-
-  if (user) {
-    if (checkPW(password, user.password)) {
-      req.session.user = {
-        userId: user.userId,
-        email: user.email
+const signin = async (req, res, next) => {
+  passport.authenticate("local", (authError, user, info) => {
+    if (authError) return next(error);
+    if (!user) return res.status(400).json({ message: "로그인 에러" });
+    return req.login(user, (loginError) => {
+      if (loginError) {
+        return next(loginError);
       }
-      // const tokens = await generateTokens(res, { userId: user.userId });
-      return res
-        .status(200)
-        .json({ message: "로그인이 완료되었습니다."});
-    } else {
-      return res.status(401).json({ message: "비밀번호가 틀렸습니다." });
-    }
-  } else {
-    return res.status(401).json({ message: "존재하지 않는 사용자입니다." });
-  }
+      return res.redirect("/");
+    });
+  })(req, res, next);
 };
 
-const signout = async (req, res) => {
-  try {
-    res.clearCookie("accessToken");
-    res.clearCookie("refreshToken");
-
-    return res.status(200).json({ message: "로그아웃 되었습니다." });
-  } catch (error) {
-    return res.status(400).json({ message: "로그아웃에 실패했습니다.", error });
-  }
+const signout = async (req, res, next) => {
+  req.logout(function (err) {
+    if (err) {
+      return next(err);
+    }
+    res.redirect("/");
+  });
 };
 
 const signup = async (req, res) => {
@@ -53,40 +37,45 @@ const signup = async (req, res) => {
     });
 
     if (user) {
-      return res.status(403).json({message: "존재하는 사용자입니다."})
+      return res.status(403).json({ message: "존재하는 사용자입니다." });
     } else {
       const valid = await prisma.valid.findFirst({
-        where:{
-          email:email
-        }
-      })
-      if (valid){
-        const code = createEmailToken(req.body)
+        where: {
+          email: email,
+        },
+      });
+      if (valid) {
+        const code = createEmailToken({
+          ...req.body,
+          password: await encryptPW(password),
+        });
         await prisma.valid.update({
-          where:{
-            email: email
+          where: {
+            email: email,
           },
           data: {
             code,
-          }
-        })
-        emailCodeTransporter(code);
-      } else {
-        const code = createEmailToken({...req.body, password: await encryptPW(password)});
-
-        await prisma.valid.create({
-          data:{
-            email,
-            code: code
-          }
+          },
         });
         emailCodeTransporter(code);
-      }
-      return res.status(201).json({message: "이메일을 발송했습니다."})
-    }
+      } else {
+        const code = createEmailToken({
+          ...req.body,
+          password: await encryptPW(password),
+        });
 
+        await prisma.valid.create({
+          data: {
+            email,
+            code: code,
+          },
+        });
+        emailCodeTransporter(code, email);
+      }
+      return res.status(201).json({ message: "이메일을 발송했습니다." });
+    }
   } catch (error) {
-    console.log(error)
+    console.log(error);
     return res.status(400).json({ message: error });
   }
 };
@@ -96,7 +85,6 @@ const emailValid = async (req, res) => {
     const { code } = req.query;
 
     const user = verifyToken(code);
-    console.log(user);
 
     const valid = await prisma.valid.findFirst({
       where: {
@@ -104,7 +92,6 @@ const emailValid = async (req, res) => {
         code,
       },
     });
-    console.log(valid)
 
     if (valid) {
       await prisma.users.create({
@@ -120,8 +107,8 @@ const emailValid = async (req, res) => {
       await prisma.valid.delete({
         where: {
           email: user.email,
-        }
-      })
+        },
+      });
       return res
         .status(201)
         .json({ message: "회원가입이 완료되었습니다. 로그인해주세요." });
@@ -129,7 +116,7 @@ const emailValid = async (req, res) => {
       return res.status(401).json({ message: "잘못된 접근입니다." });
     }
   } catch (error) {
-    console.log(error)
+    console.log(error);
     return res.status(400).json({ message: error });
   }
 };
