@@ -21,13 +21,17 @@
         const title = document.getElementById("post_title").value;
         const content = document.getElementById("post_content").value;
         const photos = document.getElementById("post_photo").value;
-
+        console.log("photos?", photos);
         const options = {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ title, content, photos }),
+          body: JSON.stringify({
+            title,
+            content,
+            photos: photos,
+          }),
         };
 
         fetch(url, options)

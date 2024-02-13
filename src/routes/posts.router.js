@@ -16,7 +16,8 @@ router.post("/postView", authMiddleware, async (req, res, next) => {
     const { userId, nickname } = req.locals.user;
     const { title, content, photos } = req.body;
 
-    const photosJson = JSON.stringify(photos);
+    //JSON형 데이터라서 이스케이프 문자가 내장돼 있었음. 그래서 파싱된 후에(이경우는 express.json()이 파싱해줌) 자바스크립트 문자열로 바꿔줌
+    const photosJson = String(photos);
     const post = await prisma.posts.create({
       data: {
         userId: +userId,
