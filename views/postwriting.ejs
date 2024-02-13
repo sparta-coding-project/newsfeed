@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div>
+      <p>제목: <input type="text" id="post_title" /></p>
+      <p>내용: <input type="text" id="post_content" /></p>
+      <p>사진: <input type="text" id="post_photo" /></p>
+      <button type="button" class="btn btn-light" id="post_writing">
+        작성하기
+      </button>
+    </div>
+
+    <script>
+      document.getElementById("post_writing").addEventListener("click", () => {
+        const url = `http://localhost:6100/api/postView`;
+        const title = document.getElementById("post_title").value;
+        const content = document.getElementById("post_content").value;
+        const photos = document.getElementById("post_photo").value;
+
+        const options = {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ title, content, photos }),
+        };
+
+        fetch(url, options)
+          .then((response) => response.json())
+          .then((data) => {
+            if (data) {
+              // data: post.postId
+              const postId = data.data;
+              window.location.href = `http://localhost:6100/view_the_post/${postId}`;
+            }
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      });
+    </script>
+  </body>
+</html>
