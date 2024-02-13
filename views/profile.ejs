@@ -55,7 +55,9 @@
       temp_html += `
                               <div class="col">
                               <div class="card" type = "Button" postId = "${userId}" >
+                                
                                 <button class="follow" type="Button" id="follow">팔로우하기</button>
+                              
                                 <div class="card-img-top">${photo}</div>
                               <div class= "card-body" >
                                   <h5 class="card-title" style = "font-weight: bold; font-size: 195%">${nickname}</h5>
@@ -69,13 +71,24 @@
       document.getElementById("profileList").innerHTML = temp_html;
 
       document.getElementById("follow").addEventListener("click", () => {
+        console.log("s0 :", userProfile);
         const url = `http://localhost:6100/api/profile/${userProfile}/follow`;
 
-        fetch(url).then((response) => {
+        const dataInfo = {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          }
+        }
+
+        fetch(url, dataInfo).then((response) => {
           try {
-            if (response.ok === false) {
-              throw new Error();
-            }
+            console.log("a0 : ", response);
+
+            // if (response.ok === false) {
+            //   throw new Error();
+            // }
+
           } catch (error) {
             console.error(error);
           }
