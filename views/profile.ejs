@@ -14,7 +14,8 @@
   <div id="profileList"></div>
 
   <script>
-    // window.location.href = `/api/profile`;
+    const userProfile = window.location.pathname.split("/")[2];
+
     const options = {
       method: "GET",
     };
@@ -35,7 +36,7 @@
         });
     }
 
-    const profileUrl = "http://localhost:6100/api/profile";
+    const profileUrl = `http://localhost:6100/api/profile/${userProfile}`;
 
     forProfile(profileUrl).then((data) => {
       const profiles = data.data;
@@ -54,9 +55,8 @@
       temp_html += `
                               <div class="col">
                               <div class="card" type = "Button" postId = "${userId}" >
-                              <div class="card-img-top">
-                              ${photo}
-                              </div>
+                                <button class="follow" type="Button" id="follow">팔로우하기</button>
+                                <div class="card-img-top">${photo}</div>
                               <div class= "card-body" >
                                   <h5 class="card-title" style = "font-weight: bold; font-size: 195%">${nickname}</h5>
                                   <h5>나이 : ${age}</h5>
@@ -67,8 +67,21 @@
                                   </div>
                               `;
       document.getElementById("profileList").innerHTML = temp_html;
-    });
 
+      document.getElementById("follow").addEventListener("click", () => {
+        const url = `http://localhost:6100/api/profile/${userProfile}/follow`;
+
+        fetch(url).then((response) => {
+          try {
+            if (response.ok === false) {
+              throw new Error();
+            }
+          } catch (error) {
+            console.error(error);
+          }
+        });
+      });
+    });
   </script>
 </body>
 
