@@ -26,15 +26,8 @@ router.post("/postView", authMiddleware, async (req, res, next) => {
         photos: photosJson,
       },
     });
-    return res.status(201).json({
-      message: "게시물 작성이 완료되었습니다.",
-      data: {
-        title: post.title,
-        author: post.author,
-        photos: post.photos,
-        createdAt: post.createdAt,
-      },
-    });
+
+    return res.status(303).render("post");
   } catch (error) {
     next(error);
   }
@@ -44,13 +37,13 @@ router.post("/postView", authMiddleware, async (req, res, next) => {
 router.get("/postView/:postId", async (req, res, next) => {
   try {
     const { postId } = req.params;
-
     const post = await prisma.posts.findFirst({
       where: {
         postId: +postId,
       },
       select: {
         title: true,
+        author: true,
         content: true,
         photos: true,
         createdAt: true,
@@ -62,16 +55,14 @@ router.get("/postView/:postId", async (req, res, next) => {
         .status(404)
         .json({ message: "해당 게시물이 존재하지 않습니다." });
     }
-    return res.status(200).json({
-      message: "게시물이 조회되었습니다.",
-      data: post,
-    });
+
+    return res.status(200).json({ data: post });
   } catch (error) {
     next(error);
   }
 });
 //게시물 수정 API
-router.put("/postView/:postId", authMiddleware, async (req, res, next) => {
+router.patch("/postView/:postId", authMiddleware, async (req, res, next) => {
   try {
     const { postId } = req.params;
     const { userId } = req.locals.user;
@@ -100,10 +91,7 @@ router.put("/postView/:postId", authMiddleware, async (req, res, next) => {
     if (!post)
       return res.status(404).json({ message: "게시물 수정에 실패하였습니다." });
 
-    return res.status(201).json({
-      message: "게시물 수정이 완료되었습니다.",
-      data: post,
-    });
+    return res.status(303).render("post", { path: post.postId });
   } catch (error) {
     next(error);
   }
@@ -131,7 +119,9 @@ router.delete("/postView/:postId", authMiddleware, async (req, res, next) => {
       },
     });
 
-    return res.status(200).json({ message: "게시물이 삭제되었습니다." });
+    return res.status(303).render("newsfeed", {
+      message: "게시물이 삭제되었습니다.",
+    });
   } catch (error) {
     next(error);
   }

@@ -10,18 +10,21 @@ router.post(
   authMiddleware,
   async (req, res, next) => {
     try {
-      const { userId } = req.locals.user;
+      const { userId, nickname } = req.locals.user;
       const { content } = req.body;
       const { postId } = req.params;
 
-      await prisma.comments.create({
+      const comment = await prisma.comments.create({
         data: {
           userId: +userId,
           postId: +postId,
+          author: nickname,
           content,
         },
       });
-      return res.status(303).redirect(`/api/postView/${postId}`);
+      return res.status(303).render("post", {
+        message: "댓글이 작성되었습니다.",
+      });
     } catch (error) {
       next(error);
     }
@@ -32,31 +35,28 @@ router.post(
 router.get("/postView/comment/:postId", async (req, res, next) => {
   try {
     const { postId } = req.params;
-    const data = await prisma.posts.findFirst({
+    const comment = await prisma.comments.findMany({
       where: {
         postId: +postId,
       },
       select: {
-        comments: {
-          select: {
-            commentId: true,
-            userId: true,
-            postId: true,
-            content: true,
-            createdAt: true,
-            updatedAt: true,
-          },
-          orderBy: {
-            createdAt: "desc",
-          },
-        },
+        commentId: true,
+        userId: true,
+        postId: true,
+        author: true,
+        content: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+      orderBy: {
+        createdAt: "desc",
       },
     });
 
-    if (!data.comments)
+    if (!comment)
       return res.status(404).json({ message: "댓글이 존재하지 않습니다." });
 
-    return res.status(200).json({ data: data.comments });
+    return res.status(200).json({ data: comment });
   } catch (error) {
     next(error);
   }
@@ -87,7 +87,7 @@ router.patch(
         data: { content },
         where: { commentId: +commentId },
       });
-      return res.status(303).render("main", {
+      return res.status(303).render("post", {
         message: "댓글이 수정되었습니다.",
         path: modifiedData.postId,
       });
@@ -124,7 +124,7 @@ router.delete(
         },
       });
 
-      return res.status(303).render("main", {
+      return res.status(303).render("post", {
         message: "댓글이 삭제되었습니다.",
         path: postId,
       });
