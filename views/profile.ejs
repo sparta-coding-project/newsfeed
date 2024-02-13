@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+    <style></style>
+  </head>
+  <body>
+    <h1>국밥이 여행하는 곳</h1>
+    <div id="postList"></div>
+
+    <script>
+      // window.location.href = `/api/newsfeed`;
+      const options = {
+        method: "GET",
+      };
+      const url = "http://localhost:6100/api/newsfeed";
+      async function forNewsfeed() {
+        return fetch(url, options)
+          .then((response) => {
+            if (response.ok === false) {
+              console.log("response???", response);
+              throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            return response.json();
+          })
+          .catch((error) => {
+            console.error(error);
+            throw error;
+          });
+      }
+      forNewsfeed().then((data) => {
+        let posts = data.data;
+        let temp_html = "";
+
+        posts.forEach((posts) => {
+          const postId = posts.postId;
+          const title = posts.title;
+          const author = posts.author;
+          const createdAt = posts.createdAt;
+
+          temp_html += `
+                              <div class="col">
+                              <div class="card" type = "Button" postId = "${postId}" >
+                              <class="card-img-top" alt="newsfeed contents">
+                              <div class= "card-body" >
+                                  <h5 class="card-title" style = "font-weight: bold; font-size: 195%">${title}</h5>
+                                  <p class="card-text" style = "font-size: 140%">${author}</p>
+                                  <p class="card-text" style = "font-weight: bold; font-size: 160%; color: yellow;"">date: ${createdAt}</p>
+                                  </div>
+                                  </div>
+                                  </div>
+                              `;
+        });
+        document.getElementById("postList").innerHTML = temp_html;
+        console.log(temp_html);
+      });
+    </script>
+  </body>
+
+  <script></script>
+</html>
