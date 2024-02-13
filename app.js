@@ -59,6 +59,10 @@ app.get("/write_the_post", (req, res) => {
   return res.render("postwriting");
 });
 
+app.get("/profile/:userProfile", (req, res) => {
+  return res.render("profile");
+});
+
 app.listen(process.env.PORT, () => {
   console.log(process.env.PORT);
 });
