@@ -1,4 +1,4 @@
-//로그인
+<!-- //로그인
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -15,15 +15,15 @@
   <body>
     <h1>국밥이 여행하는 곳</h1>
     <div id="sign_in_page">
-      <p>로그인</p>
+      <p>회원 가입</p>
+      <p>: <input type="text" id="sign_up" /></p>
+      <p>: <input type="text" id="sign_up" /></p>
+      <p>: <input type="text" id="sign_up" /></p>
       <p>Email: <input type="text" id="sign_in_page_email" /></p>
+      <p>: <input type="text" id="sign_up" /></p>
       <p>Password: <input type="text" id="sign_in_page_pw" /></p>
-      <button type="button" class="btn btn-light" id="sign_in">로그인</button>
-      <button type="button" class="btn btn-light" id="sign_up">
-        회원 가입
+      <button type="button" class="btn btn-light" id="sign_in">회원 가입</button>
       </button>
-      <button type="button" class="btn btn-success">네이버 로그인</button>
-      <button type="button" class="btn btn-warning">카카오 로그인</button>
     </div>
 
     <script>
@@ -34,8 +34,6 @@
         const email = document.getElementById("sign_in_page_email").value;
         const password = document.getElementById("sign_in_page_pw").value;
 
-        //json stringify로 던져주는 것? 은 api가 어떻게 구현됐느냐의 문제임, 데이터를보낼땐 직렬화 해야 함(fetch는 이를 위해 json stringify를 요구한 것 뿐)
-        //받을 땐 express가 있으니까, express 자체에서
         const options = {
           method: "POST",
           headers: {
@@ -48,7 +46,6 @@
             if (response.ok === false) {
               throw new Error();
             }
-            //서버가 리스폰스를 주면, 리다이렉트는 클라와 프론트가 알아서 하는 것(성공과 실패를 결정짓는 것만 서버임).
             window.location.href = "./main";
           } catch (error) {
             console.error(error);
@@ -59,4 +56,4 @@
   </body>
 
   <script></script>
-</html>
+</html> -->
