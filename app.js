@@ -25,12 +25,7 @@ app.set("view engine", "ejs");
 // EJS 템플릿 파일이 있는 디렉토리 설정 (선택 사항)
 app.set("views", "./views");
 
-app.use(
-  express.static(
-    "C:\\Users\\3050ti\\Desktop\\Coding-Camp\\6th.Assignment\\photos"
-  )
-);
-
+app.use(express.static(process.env.STATIC_URL));
 //프로필 이미지 - 아마존 sw 경로(url)) 들어갈 예정
 // app.use(express.static('https://www.aws.s3~/'));
 
@@ -43,6 +38,10 @@ app.use("/api", [
   newsFeedRouter,
   profileRouter,
 ]);
+
+app.get("/signup", (req, res) => {
+  return res.render("signup");
+});
 
 app.get("/login", (req, res) => {
   return res.render("login");

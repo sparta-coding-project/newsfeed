@@ -37,7 +37,7 @@ router.post("/signup", async (req, res, next) => {
           nickname,
           profileImage,
           email,
-          age,
+          age: +age,
           introduction,
           password: encryptedPW, //await encryptPW(password) << await은 속한 실행 컨텍스트의 최상단에 위치해야 작동함
         },
