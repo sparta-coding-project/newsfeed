@@ -19,7 +19,7 @@
       method: "GET",
     };
 
-    async function forProfile(url) {
+    async function forProfile() {
       return fetch(url, options)
         .then((response) => {
           if (response.ok === false) {
