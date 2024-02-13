@@ -55,6 +55,10 @@ app.get("/view_the_post/:postId", (req, res) => {
   return res.render("post");
 });
 
+app.get("/write_the_post", (req, res) => {
+  return res.render("postwriting");
+});
+
 app.listen(process.env.PORT, () => {
   console.log(process.env.PORT);
 });
