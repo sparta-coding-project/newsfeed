@@ -122,8 +122,10 @@ const emailValid = async (req, res) => {
 };
 
 export default {
-  signup,
-  emailValid,
-  signin,
-  signout,
+  local: {
+    signup,
+    emailValid,
+    signin,
+    signout,
+  }
 };

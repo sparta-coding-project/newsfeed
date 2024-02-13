@@ -7,6 +7,7 @@ import passport from "passport";
 
 import loginRouter from "./src/routes/login.router.js";
 import naverRouter from "./src/routes/naver.router.js";
+import kakaoRouter from "./src/routes/kakao.router.js";
 
 import passportConfig from "./src/utils/passport/index.js";
 
@@ -33,13 +34,12 @@ app.use(passport.session());
 
 app.use("/api", [loginRouter]);
 app.get("/session", (req, res, next) => {
-  passport.authenticate('naver', (error, user, info) => {
-    console.log(user)
-    return res.status(200).json({message: "안녕하세요"})
-  })
+  passport.authenticate("naver", (error, user, info) => {
+    console.log(user);
+    return res.status(200).json({ message: "안녕하세요" });
+  });
 });
-app.use("/auth", [naverRouter]);
-app.get("/", (req, res) => res.send("hi"));
+app.use("/auth", [naverRouter, kakaoRouter]);
 
 app.listen(PORT, () => {
   console.log(PORT);

@@ -1,6 +1,6 @@
 import express from "express";
 import passport from "passport";
-import { isNotLoggedIn } from "../middlewares/passport.middleware.js";
+import { isNotLoggedIn } from "../middlewares/login.middleware.js";
 
 const router = express.Router();
 

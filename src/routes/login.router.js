@@ -4,13 +4,13 @@ import loginController from "../controllers/login.controller.js";
 import {
   isLoggedIn,
   isNotLoggedIn,
-} from "../middlewares/passport.middleware.js";
+} from "../middlewares/login.middleware.js";
 
 const router = express.Router();
 
-router.post("/signup", isNotLoggedIn, loginController.signup);
-router.get("/emailValid", isNotLoggedIn, loginController.emailValid);
-router.post("/signin", isNotLoggedIn, loginController.signin);
-router.get("/signout", isLoggedIn, loginController.signout);
+router.post("/signup", isNotLoggedIn, loginController.local.signup);
+router.get("/emailValid", isNotLoggedIn, loginController.local.emailValid);
+router.post("/signin", isNotLoggedIn, loginController.local.signin);
+router.get("/signout", isLoggedIn, loginController.local.signout);
 
 export default router;
