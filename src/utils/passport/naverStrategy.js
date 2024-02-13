@@ -41,7 +41,7 @@ export default () => {
                 ...userData,
               },
             });
-            return done(null, userData.userId, {
+            return done(null, newUser.userId, {
               message: "회원가입이 완료되었습니다.",
             });
           }
