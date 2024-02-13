@@ -1,5 +1,0 @@
--- AlterTable
-ALTER TABLE `Comments` ADD COLUMN `author` VARCHAR(191) NOT NULL  DEFAULT "";
-
--- AlterTable
-ALTER TABLE `Posts` MODIFY `author` VARCHAR(191) NOT NULL DEFAULT "";

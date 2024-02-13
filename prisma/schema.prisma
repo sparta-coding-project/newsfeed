@@ -1,87 +1,11 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
-}
-
-
-model Users {
-  userId       Int @id  @unique @default(autoincrement()) 
-  username     String   @unique 
-  nickname     String  
-  profileImage String? @db.Text
-  email        String   @unique 
-  age          Int?     
-  introduction String?
-
-  password     String 
-  createdAt    DateTime @default(now()) 
-  updatedAt    DateTime @default(now()) @updatedAt 
-
-  posts Posts[]
-  comments Comments[]
-  likes Likes[]
-  follow Follow[]
-  refreshToken RefreshToken?
-
-}
-
-model RefreshToken {
-  refreshTokenId Int    @id @default(autoincrement())
-  userId         Int    @unique
-  refreshToken   String @db.Text
-
-  users Users @relation(fields: [userId], references: [userId], onDelete: Cascade)
-}
-
-model Posts {
-  postId    Int @id @default(autoincrement())
-  userId    Int
-  title     String
-  author    String   @default("")
-  content   String   @db.Text
-  photos    String?  @db.Text
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
-
-  
-  comments Comments[]
-  likes Likes[]
-  users Users @relation(fields: [userId], references: [userId], onDelete: Cascade)
-
-}
-
-model Comments { //usernickname 있어야 함
-  commentId Int  @id  @default(autoincrement())
-  userId    Int 
-  postId    Int
-  author    String   @default("")
-  content   String?  @db.Text 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
-
-  users Users @relation(fields: [userId], references: [userId], onDelete: Cascade)
-  posts Posts @relation(fields: [postId], references: [postId], onDelete: Cascade)
-
-}
-
-model Likes {
-  likeId    Int @id @default(autoincrement())
-  userId    Int
-  postId    Int
-  commentId Int?
-
-  users    Users @relation(fields: [userId], references: [userId], onDelete: Cascade)
-  posts    Posts @relation(fields: [postId], references: [postId], onDelete: Cascade)
-}
-
-model Follow {
-  followId    Int @id @default(autoincrement())
-  userId      Int
-  followingId Int?
-
-  users Users @relation(fields: [userId], references: [userId], onDelete: Cascade)
 }
