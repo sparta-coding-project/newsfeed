@@ -19,10 +19,11 @@
 
     <script>
       // window.location.href = `/api/newsfeed`;
+      const PORT = <%- JSON.stringify(port) %>;
       const options = {
         method: "GET",
       };
-      const url = `http://localhost:6100/api/newsfeed`;
+      const url = `http://localhost:${PORT}/api/newsfeed`;
       async function fetchData() {
         return fetch(url, options)
           .then((response) => {
@@ -75,7 +76,7 @@
       });
       //로그인 페이지로 이동
       document.getElementById("sign_in").addEventListener("click", () => {
-        window.location.href = `http://localhost:6100/login`;
+        window.location.href = `http://localhost:${PORT}/login`;
       });
     </script>
   </body>

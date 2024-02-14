@@ -5,6 +5,8 @@ import commentsRouter from "./src/routes/comments.router.js";
 import followRouter from "./src/routes/follow.router.js";
 import likesRouter from "./src/routes/likes.router.js";
 import loginRouter from "./src/routes/login.router.js";
+import naverRouter from "./src/routes/naver.router.js";
+import kakaoRouter from "./src/routes/kakao.router.js";
 import newsFeedRouter from "./src/routes/newsfeed.router.js";
 import profileRouter from "./src/routes/profile.router.js";
 import postsRouter from "./src/routes/posts.router.js";
@@ -12,10 +14,6 @@ import postsRouter from "./src/routes/posts.router.js";
 import session from "express-session";
 import "dotenv/config";
 import passport from "passport";
-
-import loginRouter from "./src/routes/login.router.js";
-import naverRouter from "./src/routes/naver.router.js";
-import kakaoRouter from "./src/routes/kakao.router.js";
 
 import passportConfig from "./src/utils/passport/index.js";
 
@@ -49,27 +47,27 @@ app.use("/api", [
 ]);
 
 app.get("/signup", (req, res) => {
-  return res.render("signup");
+  return res.render("signup", { port: process.env.PORT });
 });
 
 app.get("/login", (req, res) => {
-  return res.render("login");
+  return res.render("login", { port: process.env.PORT });
 });
 
 app.get("/main", (req, res) => {
-  return res.render("newsfeed");
+  return res.render("newsfeed", { port: process.env.PORT });
 });
 
 app.get("/view_the_post/:postId", (req, res) => {
-  return res.render("post");
+  return res.render("post", { port: process.env.PORT });
 });
 
 app.get("/write_the_post", (req, res) => {
-  return res.render("postwriting");
+  return res.render("postwriting", { port: process.env.PORT });
 });
 
 app.get("/profile/:userProfile", (req, res) => {
-  return res.render("profile");
+  return res.render("profile", { port: process.env.PORT });
 });
 
 app.use(
@@ -84,14 +82,6 @@ app.use(
 );
 app.use(passport.initialize());
 app.use(passport.session());
-
-app.use("/api", [loginRouter]);
-app.get("/session", (req, res, next) => {
-  passport.authenticate("naver", (error, user, info) => {
-    console.log(user);
-    return res.status(200).json({ message: "안녕하세요" });
-  });
-});
 app.use("/auth", [naverRouter, kakaoRouter]);
 
 app.listen(PORT, () => {

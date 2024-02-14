@@ -16,8 +16,9 @@
     </div>
 
     <script>
+      const PORT = <%- JSON.stringify(port) %>;
       document.getElementById("post_writing").addEventListener("click", () => {
-        const url = `http://localhost:6100/api/postView`;
+        const url = `http://localhost:${PORT}/api/postView`;
         const title = document.getElementById("post_title").value;
         const content = document.getElementById("post_content").value;
         const photos = document.getElementById("post_photo").value;
@@ -40,7 +41,7 @@
             if (data) {
               // data: post.postId
               const postId = data.data;
-              window.location.href = `http://localhost:6100/view_the_post/${postId}`;
+              window.location.href = `http://localhost:${PORT}/view_the_post/${postId}`;
             }
           })
           .catch((error) => {

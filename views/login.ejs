@@ -26,10 +26,11 @@
       <button type="button" class="btn btn-warning">카카오 로그인</button>
     </div>
 
-    <script>
+    <script type="module">
       // ejs 서버 측 문법으로 path 삽입해 줘야 함
+      const PORT = <%- JSON.stringify(port) %>
       document.getElementById("sign_in").addEventListener("click", () => {
-        const url = `http://localhost:6100/api/signin`;
+        const url = `http://localhost:${PORT}/api/signin`;
         const email = document.getElementById("sign_in_page_email").value;
         const password = document.getElementById("sign_in_page_pw").value;
 
