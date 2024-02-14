@@ -14,6 +14,7 @@
   <div id="profileList"></div>
 
   <script>
+    const PORT = <%- JSON.stringify(port) %>;
     const userProfile = window.location.pathname.split("/")[2];
 
     const options = {
@@ -36,7 +37,7 @@
         });
     }
 
-    const profileUrl = `http://localhost:6100/api/profile/${userProfile}`;
+    const profileUrl = `http://localhost:${PORT}/api/profile/${userProfile}`;
 
     forProfile(profileUrl).then((data) => {
       const profiles = data.data;
@@ -50,7 +51,7 @@
       const createdAt = profiles.createdAt;
       const updatedAt = profiles.updatedAt;
 
-      const photo = `<img src = "http://localhost:6100/${profileImage}" style = "width: 250px; height: 200px">`;
+      const photo = `<img src = "http://localhost:${PORT}/${profileImage}" style = "width: 250px; height: 200px">`;
 
       temp_html += `
                               <div class="col">
@@ -71,7 +72,7 @@
       document.getElementById("profileList").innerHTML = temp_html;
 
       document.getElementById("follow").addEventListener("click", () => {
-        const url = `http://localhost:6100/api/profile/${userProfile}/follow`;
+        const url = `http://localhost:${PORT}/api/profile/${userProfile}/follow`;
 
         const dataInfo = {
           method: "POST",

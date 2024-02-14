@@ -18,6 +18,7 @@
     <div id="commentList"></div>
 
     <script>
+      const PORT = <%- JSON.stringify(port) %>;
       const postId = window.location.pathname.split("/")[2];
       const options = {
         method: "GET",
@@ -38,8 +39,8 @@
           });
       }
       //게시글, 댓글 url
-      const postUrl = `http://localhost:6100/api/postView/${+postId}`;
-      const commentUrl = `http://localhost:6100/api/postView/comment/${+postId}`;
+      const postUrl = `http://localhost:${PORT}/api/postView/${+postId}`;
+      const commentUrl = `http://localhost:${PORT}/api/postView/comment/${+postId}`;
 
       //게시물 띄우기
       fetchData(postUrl).then((data) => {
@@ -53,7 +54,7 @@
         let photo = [];
         for (let key in JSON.parse(posts.photos)) {
           const photoList = JSON.parse(posts.photos)[key];
-          photo += `<img src = "http://localhost:6100/${photoList}" alt = ${key} style = "width: 250px; height: 200px">`;
+          photo += `<img src = "http://localhost:${PORT}/${photoList}" alt = ${key} style = "width: 250px; height: 200px">`;
         }
         const temp_html = `
                               <div class="col">
@@ -104,7 +105,7 @@
       });
       //로그인 페이지로 이동
       document.getElementById("sign_in").addEventListener("click", () => {
-        window.location.href = `http://localhost:6100/login`;
+        window.location.href = `http://localhost:${PORT}/login`;
       });
     </script>
   </body>
