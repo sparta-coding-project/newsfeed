@@ -71,7 +71,6 @@
       document.getElementById("profileList").innerHTML = temp_html;
 
       document.getElementById("follow").addEventListener("click", () => {
-        console.log("s0 :", userProfile);
         const url = `http://localhost:6100/api/profile/${userProfile}/follow`;
 
         const dataInfo = {
@@ -83,11 +82,9 @@
 
         fetch(url, dataInfo).then((response) => {
           try {
-            console.log("a0 : ", response);
-
-            // if (response.ok === false) {
-            //   throw new Error();
-            // }
+            if (response.ok === false) {
+              throw new Error();
+            }
 
           } catch (error) {
             console.error(error);
