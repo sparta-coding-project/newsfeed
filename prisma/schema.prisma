@@ -9,24 +9,25 @@ datasource db {
 
 
 model Users {
-  userId       Int @id  @unique @default(autoincrement()) 
-  username     String   @unique 
-  nickname     String  
+  userId       Int     @id @unique @default(autoincrement())
+  provider     String?
+  clientId     String?
+  username     String?
+  nickname     String
   profileImage String? @db.Text
-  email        String   @unique 
-  age          Int?     
+  email        String  @unique
+  age          Int?
   introduction String?
 
-  password     String 
-  createdAt    DateTime @default(now()) 
-  updatedAt    DateTime @default(now()) @updatedAt 
+  password  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 
-  posts Posts[]
-  comments Comments[]
-  likes Likes[]
-  follow Follow[]
+  posts        Posts[]
+  comments     Comments[]
+  likes        Likes[]
+  follow       Follow[]
   refreshToken RefreshToken?
-
 }
 
 model RefreshToken {
@@ -38,7 +39,7 @@ model RefreshToken {
 }
 
 model Posts {
-  postId    Int @id @default(autoincrement())
+  postId    Int      @id @default(autoincrement())
   userId    Int
   title     String
   author    String   @default("")
@@ -84,4 +85,12 @@ model Follow {
   followingId Int?
 
   users Users @relation(fields: [userId], references: [userId], onDelete: Cascade)
+}
+
+
+model Valid {
+  code      String   @db.Text
+  email     String   @id @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
 }
