@@ -6,7 +6,6 @@ import followRouter from "./src/routes/follow.router.js";
 import likesRouter from "./src/routes/likes.router.js";
 import loginRouter from "./src/routes/login.router.js";
 import naverRouter from "./src/routes/naver.router.js";
-import kakaoRouter from "./src/routes/kakao.router.js";
 import newsFeedRouter from "./src/routes/newsfeed.router.js";
 import profileRouter from "./src/routes/profile.router.js";
 import postsRouter from "./src/routes/posts.router.js";
@@ -14,7 +13,6 @@ import postsRouter from "./src/routes/posts.router.js";
 import session from "express-session";
 import "dotenv/config";
 import passport from "passport";
-
 import passportConfig from "./src/utils/passport/index.js";
 
 const app = express();
@@ -82,7 +80,7 @@ app.get("/profile/:userProfile", (req, res) => {
   return res.render("profile", { port: process.env.PORT });
 });
 
-app.use("/auth", [naverRouter, kakaoRouter]);
+app.use("/auth", [naverRouter]);
 
 app.listen(PORT, () => {
   console.log(PORT);
