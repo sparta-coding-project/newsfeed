@@ -26,6 +26,18 @@ app.use(express.json());
 app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
+app.use(
+  session({
+    secret: process.env.TOKEN_SECRET_KEY,
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+      maxAge: 1000 * 60 * 60 * 24 * 7, // 7일
+    },
+  })
+);
+app.use(passport.initialize());
+app.use(passport.session());
 // EJS 템플릿 엔진 설정
 app.set("view engine", "ejs");
 
@@ -70,18 +82,6 @@ app.get("/profile/:userProfile", (req, res) => {
   return res.render("profile", { port: process.env.PORT });
 });
 
-app.use(
-  session({
-    secret: process.env.TOKEN_SECRET_KEY,
-    resave: false,
-    saveUninitialized: true,
-    cookie: {
-      maxAge: 1000 * 60 * 60 * 24 * 7, // 7일
-    },
-  })
-);
-app.use(passport.initialize());
-app.use(passport.session());
 app.use("/auth", [naverRouter, kakaoRouter]);
 
 app.listen(PORT, () => {

@@ -22,11 +22,15 @@
       <button type="button" class="btn btn-light" id="sign_up">
         회원 가입
       </button>
-      <button type="button" class="btn btn-success">네이버 로그인</button>
-      <button type="button" class="btn btn-warning">카카오 로그인</button>
+      <button type="button" class="btn btn-success naverLogin">
+        네이버 로그인
+      </button>
+      <button type="button" class="btn btn-warning kakaoLogin">
+        카카오 로그인
+      </button>
     </div>
 
-    <script type="module">
+    <script>
       // ejs 서버 측 문법으로 path 삽입해 줘야 함
       const PORT = <%- JSON.stringify(port) %>
       document.getElementById("sign_in").addEventListener("click", () => {
@@ -55,6 +59,10 @@
           }
         });
       });
+
+      document.querySelector('button.naverLogin').addEventListener("click", async () => {
+        window.location.href = "/auth/naver"
+      })
     </script>
   </body>
 
