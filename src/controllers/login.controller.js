@@ -3,6 +3,7 @@ import { generateTokens } from "../utils/token.js";
 import { checkPW, encryptPW } from "../utils/bcrypt.js";
 import { createEmailToken, verifyToken } from "../utils/token.js";
 import { emailCodeTransporter } from "../utils/nodemailer.js";
+import passport from "passport";
 
 const signin = async (req, res, next) => {
   passport.authenticate("local", (authError, user, info) => {
@@ -12,11 +13,10 @@ const signin = async (req, res, next) => {
       if (loginError) {
         return next(loginError);
       }
-      return res.redirect("/");
+      return res.redirect("/main");
     });
   })(req, res, next);
 };
-
 const signout = async (req, res, next) => {
   req.logout(function (err) {
     if (err) {
@@ -127,5 +127,5 @@ export default {
     emailValid,
     signin,
     signout,
-  }
+  },
 };

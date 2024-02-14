@@ -3,11 +3,10 @@ import { prisma } from "../prisma/index.js";
 
 import local from "./localStrategy.js";
 import naver from "./naverStrategy.js";
-import kakao from "./kakaoStrategy.js";
+// import kakao from "./kakaoStrategy.js";
 
 export default () => {
   passport.serializeUser(function (userId, done) {
-    
     done(null, userId);
   });
 
@@ -26,5 +25,5 @@ export default () => {
 
   local();
   naver();
-  kakao();
+  // kakao();
 };

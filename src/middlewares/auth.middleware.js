@@ -6,7 +6,7 @@ export default async (req, res, next) => {
 
     const user = await prisma.users.findFirst({
       where: {
-        userId
+        userId,
       },
     });
 
