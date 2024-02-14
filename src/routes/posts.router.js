@@ -28,7 +28,9 @@ router.post("/postView", authMiddleware, async (req, res, next) => {
       },
     });
 
-    return res.status(201).json({ data: post.postId });
+    return res
+      .status(201)
+      .json({ message: "게시글이 작성되었습니다.", data: post.postId });
   } catch (error) {
     next(error);
   }
@@ -92,7 +94,7 @@ router.patch("/postView/:postId", authMiddleware, async (req, res, next) => {
     if (!post)
       return res.status(404).json({ message: "게시물 수정에 실패하였습니다." });
 
-    return res.status(303).render("post", { path: post.postId });
+    return res.status(201).json({ message: "게시물이 수정되었습니다." });
   } catch (error) {
     next(error);
   }

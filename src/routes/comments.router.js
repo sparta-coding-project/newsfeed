@@ -84,13 +84,10 @@ router.patch(
           .json({ message: "댓글을 수정할 권한이 없습니다." });
 
       const modifiedData = await prisma.comments.update({
-        data: { content },
         where: { commentId: +commentId },
+        data: { content },
       });
-      return res.status(303).render("post", {
-        message: "댓글이 수정되었습니다.",
-        path: modifiedData.postId,
-      });
+      return res.status(201).json({ message: "댓글이 수정되었습니다." });
     } catch (err) {
       next(err);
     }
