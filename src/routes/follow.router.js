@@ -14,6 +14,10 @@ router.post(
       const { userProfile } = req.params;
       const { userId } = req.locals.user;
 
+      if (userProfile == userId) {
+        return res.status(400).json({ message: "본인 계정은 팔로우할 수 없습니다." });
+      }
+
       //1-1 . 팔로우 하고자 하는 유저 확인
       const userToFollow = await prisma.users.findFirst({
         where: { userId: +userProfile },
@@ -22,7 +26,7 @@ router.post(
       //1-2. 팔로우 하고자 하는 유저가 실제 존재하지 않는 경우
       if (!userToFollow)
         return res
-          .status(400)
+          .status(404)
           .json({ message: "해당 유저가 존재하지 않습니다." });
 
       //2. 이미 팔로우한 유저인지 확인
@@ -37,7 +41,6 @@ router.post(
 
       //3. 이미 팔로잉 한 사람의 경우 - 팔로우 취소
       if (checkFollowing) {
-        console.log("s3 : ");
         await prisma.follow.delete({
           where: {
             followId: checkFollowing.followId,
@@ -47,7 +50,6 @@ router.post(
         });
         return res.status(200).json({ message: "팔로우가 취소됐습니다." });
       } else if (!checkFollowing) {
-        console.log("s4");
         await prisma.follow.create({
           data: {
             userId: +userId,
