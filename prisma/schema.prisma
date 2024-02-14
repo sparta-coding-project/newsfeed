@@ -16,7 +16,6 @@ model Users {
   nickname     String
   profileImage String? @db.Text
   email        String  @unique
-  age          Int?
   introduction String?
 
   password  String?

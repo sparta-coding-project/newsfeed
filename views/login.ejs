@@ -33,6 +33,11 @@
     <script>
       // ejs 서버 측 문법으로 path 삽입해 줘야 함
       const PORT = <%- JSON.stringify(port) %>
+
+      const redirectBtn = (endPoint) => {
+        
+      }
+
       document.getElementById("sign_in").addEventListener("click", () => {
         const url = `http://localhost:${PORT}/api/signin`;
         const email = document.getElementById("sign_in_page_email").value;
@@ -47,6 +52,7 @@
           },
           body: JSON.stringify({ email, password }),
         };
+
         fetch(url, options).then((response) => {
           try {
             if (response.ok === false) {
@@ -62,6 +68,10 @@
 
       document.querySelector('button.naverLogin').addEventListener("click", async () => {
         window.location.href = "/auth/naver"
+      })
+
+      document.querySelector("#sign_up").addEventListener("click", ()=> {
+        windw.location.href = "signup"
       })
     </script>
   </body>

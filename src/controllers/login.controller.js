@@ -57,7 +57,7 @@ const signup = async (req, res) => {
             code,
           },
         });
-        emailCodeTransporter(code);
+        emailCodeTransporter(code, email);
       } else {
         const code = createEmailToken({
           ...req.body,
