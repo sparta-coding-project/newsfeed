@@ -3,22 +3,15 @@ import { prisma } from "../utils/prisma/index.js";
 import { checkPW, encryptPW } from "../utils/bcrypt.js";
 import { generateTokens } from "../utils/token.js";
 import authMiddleware from "../middlewares/auth.middleware.js";
+import { upload } from "../middlewares/multer.middleware.js";
 
 const router = express.Router();
 
 //1. 회원가입 API
-router.post("/signup", async (req, res, next) => {
+router.post("/signup", upload.single("file1"), async (req, res, next) => {
   try {
-    const {
-      username,
-      nickname,
-      profileImage,
-      email,
-      age,
-      introduction,
-      password,
-    } = req.body;
-
+    const { username, nickname, email, age, introduction, password } = req.body;
+    const profileImage = String(req.file.filename); //멀터 사진 이름 만들기
     const user = await prisma.users.findFirst({
       where: {
         username,
