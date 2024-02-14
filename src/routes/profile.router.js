@@ -1,14 +1,14 @@
 import express from "express";
 import { prisma } from "../utils/prisma/index.js";
 import { checkPW, encryptPW } from "../utils/bcrypt.js";
-import authMiddleware from "../middlewares/auth.middleware.js";
+import { isLoggedIn } from "../middlewares/login.middleware.js";
 
 const router = express.Router();
 
 //프로필 조회 API
-router.get("/profile", authMiddleware, async (req, res, next) => {
+router.get("/profile", isLoggedIn, async (req, res, next) => {
   try {
-    const { userId } = req.locals.user;
+    const { userId } = req.user;
 
     const user = await prisma.users.findFirst({
       where: { userId: +userId },
@@ -32,9 +32,9 @@ router.get("/profile", authMiddleware, async (req, res, next) => {
 });
 
 //타 계정 프로필 조회
-router.get("/profile/:userProfile", authMiddleware, async (req, res, next) => {
+router.get("/profile/:userProfile", isLoggedIn, async (req, res, next) => {
   try {
-    const { userId } = req.locals.user;
+    const { userId } = req.user;
     const { userProfile } = req.params;
 
     const user = await prisma.users.findFirst({
@@ -55,9 +55,9 @@ router.get("/profile/:userProfile", authMiddleware, async (req, res, next) => {
 });
 
 //프로필 수정 API
-router.patch("/profile", authMiddleware, async (req, res, next) => {
+router.patch("/profile", isLoggedIn, async (req, res, next) => {
   try {
-    const { userId } = req.locals.user;
+    const { userId } = req.user;
     const {
       username,
       nickname,

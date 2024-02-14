@@ -12,10 +12,11 @@ router.get("/naver", isNotLoggedIn, passport.authenticate("naver", null), functi
 router.get(
   "/naver/callback", isNotLoggedIn,
   passport.authenticate("naver", {
-    failureRedirect: "#!/auth/login",
+    failureRedirect: "/auth/naver",
   }),
   function (req, res) {
     res.redirect("/main");
+    return res.status(200).json({message:"로그인에 성공했습니다."})
   }
 );
 

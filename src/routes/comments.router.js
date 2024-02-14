@@ -1,16 +1,16 @@
 import express from "express";
 import { prisma } from "../utils/prisma/index.js";
-import authMiddleware from "../middlewares/auth.middleware.js";
+import { isLoggedIn } from "../middlewares/login.middleware.js";
 
 const router = express.Router();
 
 //댓글 작성 API
 router.post(
   "/postView/comment/:postId",
-  authMiddleware,
+  isLoggedIn,
   async (req, res, next) => {
     try {
-      const { userId, nickname } = req.locals.user;
+      const { userId, nickname } = req.user;
       const { content } = req.body;
       const { postId } = req.params;
 
@@ -66,10 +66,10 @@ router.get("/postView/comment/:postId", async (req, res, next) => {
 //CUD 는 라우터 경로 겹치면 commentId와 postId가 겹칠 경우 에러가 나거나, 예상치 못한게 지워질 수 있을 것 같음ds
 router.patch(
   "/postView/comment/:commentId",
-  authMiddleware,
+  isLoggedIn,
   async (req, res, next) => {
     try {
-      const { userId } = req.locals.user;
+      const { userId } = req.user;
       const { commentId } = req.params;
       const { content } = req.body;
 
@@ -98,10 +98,10 @@ router.patch(
 //CUD 는 라우터 경로 겹치면 commentId와 postId가 겹칠 경우 에러가 나거나, 예상치 못한게 지워질 수 있을 것 같음
 router.delete(
   "/postView/comment/:commentId",
-  authMiddleware,
+  isLoggedIn,
   async (req, res, next) => {
     try {
-      const { userId } = req.locals.user;
+      const { userId } = req.user;
       const { commentId } = req.params;
       const isExistComment = await prisma.comments.findFirst({
         where: { commentId: +commentId },
