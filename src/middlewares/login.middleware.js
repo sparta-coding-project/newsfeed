@@ -3,8 +3,7 @@ export const isLoggedIn = (req, res, next) => {
   if (req.isAuthenticated()) {
     next();
   } else {
-    // if (req.route.path !== '/signout')
-    // res.redirect("/login")
+    res.redirect("/login")
     res.status(403).json({ message: "로그인이 필요합니다." });
   }
 };

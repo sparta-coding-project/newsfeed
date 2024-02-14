@@ -12,7 +12,7 @@ router.get("/naver", isNotLoggedIn, passport.authenticate("naver", null), functi
 router.get(
   "/naver/callback", isNotLoggedIn,
   passport.authenticate("naver", {
-    failureRedirect: "#!/auth/login",
+    failureRedirect: "/auth/naver",
   }),
   function (req, res) {
     res.redirect("/main");
