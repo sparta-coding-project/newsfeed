@@ -1,11 +1,8 @@
-import { verifyAccessToken } from "../utils/token.js";
 import { prisma } from "../utils/prisma/index.js";
 
 export default async (req, res, next) => {
   try {
-    const { accessToken, refreshToken } = req.cookies;
-
-    const { userId } = verifyAccessToken(accessToken);
+    const { userId } = req.session.user;
 
     const user = await prisma.users.findFirst({
       where: {

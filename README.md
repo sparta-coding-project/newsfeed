@@ -1,5 +1,42 @@
 # newsfeed
 
-<필수 구현 기능>
-1. 회원가능 기능
-1-1. 새로운 사용자가 ID와 비밀번호 형태로 서비스에 가입할 수 있음.
+## dotenv
+```
+DATABASE_URL=
+TOKEN_SECRET_KEY=
+PORT=
+
+EMAIL_USER=
+EMAIL_PASS=
+
+NAVER_CLIENT_ID=
+NAVER_CLIENT_SECRET=
+
+KAKAO_CLIENT_ID=
+
+STATIC_URL=""
+```
+
+## Getting Started
+
+1. `npm i`
+2. `node app.js`
+3. [localhost:3000](localhost:3000) 접속
+
+## API Structure
+
+- View Renderer
+    - `/signup`
+    - `/login`
+    - `/main`
+    - `/view_the_post/:postId`
+    - `/write_the_post`
+    - `/profile/:userProfile`
+- Local Login
+    - `/api/signup`
+    - `/api/emailValid`
+    - `/api/signin`
+    - `/api/signout`
+- Social Login
+    - `/auth/naver`
+    - `/auth/kakao`
