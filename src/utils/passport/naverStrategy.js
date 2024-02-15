@@ -20,18 +20,15 @@ export default () => {
           });
           if (exUser) {
             if (exUser.clientId === profile.id) {
-              console.log("s2 - naverStrategy 1");
               return done(null, exUser.userId, {
                 message: "로그인되었습니다.",
               }); // Error: Failed to obtain access token
             } else {
-              console.log("s2 - naverStrategy 2");
               return done(null, false, {
                 message: "사용자 정보가 잘못되었습니다.",
               });
             }
           } else {
-            console.log("s2 - naverStrategy 3");
             const userData = {
               clientId: profile.id,
               provider: profile.provider,
@@ -45,7 +42,7 @@ export default () => {
                 ...userData,
               },
             });
-            console.log("s2 - naverStrategy 4");
+
             return done(null, newUser.userId, {
               message: "회원가입이 완료되었습니다.",
             });
