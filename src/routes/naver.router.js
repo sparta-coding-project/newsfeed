@@ -21,7 +21,6 @@ router.get(
     failureRedirect: "/auth/naver",
   }),
   function (req, res) {
-    console.log("s4 - naver.router 1");
     return res.status(200).redirect("/main");
     // return res.status(200).json({ message: "로그인에 성공했습니다." });
   }
