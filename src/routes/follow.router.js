@@ -1,6 +1,6 @@
 import express from "express";
 import { prisma } from "../utils/prisma/index.js";
-import authMiddleware from "../middlewares/auth.middleware.js";
+import { isLoggedIn } from "../middlewares/login.middleware.js";
 
 const router = express.Router();
 
@@ -8,11 +8,11 @@ const router = express.Router();
 // followedId 컬럼은 만들려다 삭제함, 어차피 followingId컬럼으로 다 식별 가능
 router.post(
   "/profile/:userProfile/follow",
-  authMiddleware,
+  isLoggedIn,
   async (req, res, next) => {
     try {
       const { userProfile } = req.params;
-      const { userId } = req.locals.user;
+      const { userId } = req.user;
 
       if (userProfile == userId) {
         return res.status(400).json({ message: "본인 계정은 팔로우할 수 없습니다." });

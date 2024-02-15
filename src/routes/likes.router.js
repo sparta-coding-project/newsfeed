@@ -1,6 +1,6 @@
 import express from "express";
 import { prisma } from "../utils/prisma/index.js";
-import authMiddleware from "../middlewares/auth.middleware.js";
+import { isLoggedIn } from "../middlewares/login.middleware.js";
 
 const router = express.Router();
 
@@ -9,11 +9,11 @@ const router = express.Router();
 //기존 방침에서 변경했습니다.
 router.post(
   "/postView/:postId/likes",
-  authMiddleware,
+  isLoggedIn,
   async (req, res, next) => {
     try {
       const { postId } = req.params;
-      const { userId } = req.locals.user;
+      const { userId } = req.user;
 
       //좋아요를 누르고자 하는 포스트 정보 탐색
       const post = await prisma.posts.findFirst({
@@ -65,7 +65,7 @@ router.post(
 //게시글 좋아요 취소 API
 // router.post(
 //   "/postView/:postId/likes",
-//   authMiddleware,
+//   isLoggedIn,
 //   async (req, res, next) => {
 //     try {
 //       const { postId } = req.params;
@@ -98,7 +98,7 @@ router.post(
 //댓글 좋아요 생성&취소 API
 router.post(
   "/postView/comments/:commentId/likes",
-  authMiddleware,
+  isLoggedIn,
   async (req, res, next) => {
     try {
       const { commentId } = req.params;
@@ -150,7 +150,7 @@ router.post(
 //댓글 좋아요 취소 API
 // router.delete(
 //   "/comments/:commentId/likes",
-//   authMiddleware,
+//   isLoggedIn,
 //   async (req, res, next) => {
 //     try {
 //       const { commentId } = req.params;

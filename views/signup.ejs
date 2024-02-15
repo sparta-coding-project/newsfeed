@@ -28,10 +28,11 @@
     </div>
 
     <script>
+      const PORT = <%- JSON.stringify(port) %>;
       // ejs 서버 측 문법으로 path 삽입해 줘야 함
 
       document.getElementById("sign_in").addEventListener("click", () => {
-        const url = `http://localhost:6100/api/signup`;
+        const url = `http://localhost:${PORT}/api/signup`;
         const username = document.getElementById("sign_up_username").value;
         const nickname = document.getElementById("sign_up_nickname").value;
         const profileImage = document.getElementById(

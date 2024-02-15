@@ -1,16 +1,16 @@
 import express from "express";
 import { prisma } from "../utils/prisma/index.js";
-import authMiddleware from "../middlewares/auth.middleware.js";
+import { isLoggedIn } from "../middlewares/login.middleware.js";
 
 const router = express.Router();
 
 //댓글 작성 API
 router.post(
   "/postView/comment/:postId",
-  authMiddleware,
+  isLoggedIn,
   async (req, res, next) => {
     try {
-      const { userId, nickname } = req.locals.user;
+      const { userId, nickname } = req.user;
       const { content } = req.body;
       const { postId } = req.params;
 
@@ -66,10 +66,10 @@ router.get("/postView/comment/:postId", async (req, res, next) => {
 //CUD 는 라우터 경로 겹치면 commentId와 postId가 겹칠 경우 에러가 나거나, 예상치 못한게 지워질 수 있을 것 같음ds
 router.patch(
   "/postView/comment/:commentId",
-  authMiddleware,
+  isLoggedIn,
   async (req, res, next) => {
     try {
-      const { userId } = req.locals.user;
+      const { userId } = req.user;
       const { commentId } = req.params;
       const { content } = req.body;
 
@@ -84,13 +84,10 @@ router.patch(
           .json({ message: "댓글을 수정할 권한이 없습니다." });
 
       const modifiedData = await prisma.comments.update({
-        data: { content },
         where: { commentId: +commentId },
+        data: { content },
       });
-      return res.status(303).render("post", {
-        message: "댓글이 수정되었습니다.",
-        path: modifiedData.postId,
-      });
+      return res.status(201).json({ message: "댓글이 수정되었습니다." });
     } catch (err) {
       next(err);
     }
@@ -101,10 +98,10 @@ router.patch(
 //CUD 는 라우터 경로 겹치면 commentId와 postId가 겹칠 경우 에러가 나거나, 예상치 못한게 지워질 수 있을 것 같음
 router.delete(
   "/postView/comment/:commentId",
-  authMiddleware,
+  isLoggedIn,
   async (req, res, next) => {
     try {
-      const { userId } = req.locals.user;
+      const { userId } = req.user;
       const { commentId } = req.params;
       const isExistComment = await prisma.comments.findFirst({
         where: { commentId: +commentId },

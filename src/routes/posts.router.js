@@ -7,13 +7,13 @@
 //         - 프론트엔드에서 게시물 작성, 수정 및 삭제를 할 때마다 조회 API를 다시 호출하여 자연스럽게 최신의 게시물 내용을 화면에 보여줄 수 있도록 해야 합니다!
 import express from "express";
 import { prisma } from "../utils/prisma/index.js";
-import authMiddleware from "../middlewares/auth.middleware.js";
+import { isLoggedIn } from "../middlewares/login.middleware.js";
 
 const router = express.Router();
 //게시물 작성 API(근데 이거 한 게시물에 사진 여러장 어떻게 넣지?)
-router.post("/postView", authMiddleware, async (req, res, next) => {
+router.post("/postView", isLoggedIn, async (req, res, next) => {
   try {
-    const { userId, nickname } = req.locals.user;
+    const { userId, nickname } = req.user;
     const { title, content, photos } = req.body;
 
     //JSON형 데이터라서 이스케이프 문자가 내장돼 있었음. 그래서 파싱된 후에(이경우는 express.json()이 파싱해줌) 자바스크립트 문자열로 바꿔줌
@@ -28,7 +28,9 @@ router.post("/postView", authMiddleware, async (req, res, next) => {
       },
     });
 
-    return res.status(201).json({ data: post.postId });
+    return res
+      .status(201)
+      .json({ message: "게시글이 작성되었습니다.", data: post.postId });
   } catch (error) {
     next(error);
   }
@@ -63,10 +65,10 @@ router.get("/postView/:postId", async (req, res, next) => {
   }
 });
 //게시물 수정 API
-router.patch("/postView/:postId", authMiddleware, async (req, res, next) => {
+router.patch("/postView/:postId", isLoggedIn, async (req, res, next) => {
   try {
     const { postId } = req.params;
-    const { userId } = req.locals.user;
+    const { userId } = req.user;
     const { title, content, photos } = req.body;
 
     const photosJson = JSON.stringify(photos);
@@ -92,15 +94,15 @@ router.patch("/postView/:postId", authMiddleware, async (req, res, next) => {
     if (!post)
       return res.status(404).json({ message: "게시물 수정에 실패하였습니다." });
 
-    return res.status(303).render("post", { path: post.postId });
+    return res.status(201).json({ message: "게시물이 수정되었습니다." });
   } catch (error) {
     next(error);
   }
 });
 //게시물 삭제 API
-router.delete("/postView/:postId", authMiddleware, async (req, res, next) => {
+router.delete("/postView/:postId", isLoggedIn, async (req, res, next) => {
   try {
-    const { userId } = req.locals.user;
+    const { userId } = req.user;
     const { postId } = req.params;
 
     const post = await prisma.posts.findFirst({
